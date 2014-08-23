@@ -69,10 +69,10 @@ echo "===================== Extract Package: End   ==========================="
 
 echo ""
 echo "===================== Install Package: Start ==========================="
-cd git-$git_ver_new
 mkdir -p $git_exe_dir
-./configure --prefix=$(dirname $git_exe_dir)
-make install
+cd git-$git_ver_new
+make prefix=$(dirname $git_exe_dir) all
+make prefix=$(dirname $git_exe_dir) install
 cd ..
 rm -rf git-$git_ver_new
 echo "===================== Install Package: End   ==========================="
