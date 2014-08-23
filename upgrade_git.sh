@@ -85,5 +85,6 @@ fi
 echo ""
 echo "========================================================================="
 echo "You have successfully installed/upgraded from '$git_ver_old' to '$git_ver_new'"
+echo "You may have to add '$git_exe_dir' to your PATH"
 echo "========================================================================="
 echo ""
