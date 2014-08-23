@@ -1,11 +1,11 @@
 #!/bin/bash
 
+
 if [ $(id -u) != "0" ]; then
      is_root=false
 else
      is_root=true
 fi
-
 
 echo "========================================================================="
 if [ "$is_root" = true ]; then
@@ -25,12 +25,12 @@ if [ "$git_ver_old" = "" ]; then
      git_ver_old="None"
 fi
 echo "Current git Version: $git_ver_old"
-echo "You can get version number from http://git-scm.com/downloads"
+echo "You can get version number from 'https://github.com/git/git/releases'"
 echo "Please input the git version you want install/upgrade..."
 echo "Note: the latest build may not work as usaully!"
-read -p "For example, '1.8.5.5' or 'latest': " git_ver_new
+read -p "For example, '2.1.0' or 'latest': " git_ver_new
 if [ "$git_ver_new" = "" ]; then
-     echo "*** Error: You must input a git version!!"
+     echo "*** Error: No git version is given."
      exit 1
 fi
 
@@ -47,14 +47,13 @@ rm -rf git-$git_ver_new* # remove old sources
 if [ "$git_ver_new" = "latest" ]; then
      wget -O git-latest.zip https://github.com/git/git/archive/master.zip
 else
-     wget http://git-core.googlecode.com/files/git-$git_ver_new.tar.gz
+     wget https://github.com/git/git/archive/v$git_ver_new.zip
 fi
 if [ $? -eq 0 ]; then
      echo "Download 'git-$git_ver_new' successfully!"
 else
      echo "*** WARNING! Maybe the git version you input was wrong, please check!"
-     echo "git version input was: $git_ver_new"
-     sleep 5
+     echo "The git version you just input was: $git_ver_new"
      exit 1
 fi
 echo "===================== Download Package: End   ==========================="
@@ -67,8 +66,8 @@ if [ "$git_ver_new" = "latest" ]; then
      rm -f git-latest.zip*
      mv git-master git-latest
 else
-     tar zxvf git-$git_ver_new.tar.gz
-     rm -f git-$git_ver_new.tar.gz*
+     unzip zxvf git-$git_ver_new.zip
+     rm -f git-$git_ver_new.zip*
 fi
 echo "===================== Extract Package: End   ==========================="
 
@@ -76,7 +75,6 @@ echo "===================== Extract Package: End   ==========================="
 echo ""
 echo "===================== Install Package: Start ==========================="
 cd git-$git_ver_new
-
 mkdir -p $git_exe_dir
 ./configure --prefix=$(dirname $git_exe_dir)
 make install
