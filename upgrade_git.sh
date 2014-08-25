@@ -71,8 +71,8 @@ echo ""
 echo "===================== Install Package: Start ==========================="
 mkdir -p $git_exe_dir
 cd git-$git_ver_new
-make prefix=$(dirname $git_exe_dir) all
-make prefix=$(dirname $git_exe_dir) install
+make prefix=$(dirname $git_exe_dir) all CFLAGS="-liconv"
+make prefix=$(dirname $git_exe_dir) install CFLAGS="-liconv"
 cd ..
 rm -rf git-$git_ver_new
 echo "===================== Install Package: End   ==========================="
