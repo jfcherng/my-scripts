@@ -1,5 +1,7 @@
 #!/usr/bin/expect
 
+# Usage: ./yppasswd.sh USERNAME NEW_PASSWORD
+
 set rootpwd "Your root password"
 set newpwd [lindex $argv 1]
 
