@@ -41,9 +41,9 @@ echo ""
 echo "===================== Download Package: Start ==========================="
 rm -rf git-$git_ver_new* # remove old sources
 if [ "$git_ver_new" = "latest" ]; then
-     wget -O git-latest.zip https://github.com/git/git/archive/master.zip
+     wget --no-check-certificate -O git-latest.zip https://github.com/git/git/archive/master.zip
 else
-     wget -O git-$git_ver_new.zip https://github.com/git/git/archive/v$git_ver_new.zip
+     wget --no-check-certificate -O git-$git_ver_new.zip https://github.com/git/git/archive/v$git_ver_new.zip
 fi
 if [ $? -eq 0 ]; then
      echo "Download 'git-$git_ver_new' successfully!"
