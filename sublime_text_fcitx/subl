@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 SUBLIME_HOME="/opt/sublime_text"
 LD_LIB=$SUBLIME_HOME/libsublime-imfix.so
 
-sh -c "LD_PRELOAD=$LD_LIB exec $SUBLIME_HOME/sublime_text '$@'"
+LD_PRELOAD=$LD_LIB exec $SUBLIME_HOME/sublime_text "$@"
