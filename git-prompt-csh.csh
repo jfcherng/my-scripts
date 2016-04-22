@@ -1,4 +1,4 @@
-﻿### Usage:
+### Usage:
 ### In your '~/.tcshrc', add the following line:
 ###     alias precmd "source PATH_OF_THIS_FILE"
 ### And then do $ source ~/.tcshrc
