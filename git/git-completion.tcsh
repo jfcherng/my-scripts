@@ -126,4 +126,4 @@ complete git  'p,*,`bash ${__git_tcsh_completion_script} git "${COMMAND_LINE}"`,
 complete gitk 'p,*,`bash ${__git_tcsh_completion_script} gitk "${COMMAND_LINE}"`,'
 
 # I usually alias 'g' with 'git'
-complete g  'p,*,`bash ${__git_tcsh_completion_script} g "${COMMAND_LINE}"`,'
+complete g  'p,*,`bash ${__git_tcsh_completion_script} git "${COMMAND_LINE}"`,'
