@@ -1,5 +1,7 @@
 #!/bin/env bash
 
+threadCnt=$(grep -c ^processor /proc/cpuinfo)
+
 if [ "$(id -u)" != "0" ]; then
     is_root=false
 else
@@ -87,8 +89,8 @@ if `command -v autoconf >/dev/null 2>&1`; then
     autoconf
     ./configure --prefix=$(dirname "${git_exe_dir}")
 fi
-make prefix=$(dirname "${git_exe_dir}") all     #CFLAGS="-liconv"
-make prefix=$(dirname "${git_exe_dir}") install #CFLAGS="-liconv"
+make -j$threadCnt all     #CFLAGS="-liconv"
+make -j$threadCnt install #CFLAGS="-liconv"
 cd .. || exit
 rm -rf "git-${git_ver_new}"
 echo "===================== Install Package: End   ==========================="
