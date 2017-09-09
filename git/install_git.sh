@@ -30,21 +30,14 @@ echo "Current git Version: ${git_ver_old}"
 echo "You can find version number from 'https://github.com/git/git/releases'"
 echo "Note: the latest build may not work properly!"
 
+# input version
 read -rp "What's the git version you want to install? (For example, '2.14.1' or 'latest'): " git_ver_new
 if [ "${git_ver_new}" = "" ]; then
     echo "[Error] No git version is given."
     exit 1
 fi
 
-read -rp "Do you want to compile document files? [y/N]: " should_compile_docs
-if [ "${should_compile_docs,,}" = "y" ]; then
-    git_make_objects_1="all doc info"
-    git_make_objects_2="install install-doc install-html install-info"
-else
-    git_make_objects_1="all"
-    git_make_objects_2="install"
-fi
-
+# input thread counts
 read -rp "Parallel compilation with thread counts (default = ${thread_count_default}): " thread_count
 if [ "${thread_count}" = "" ]; then
     thread_count=${thread_count_default}
@@ -81,11 +74,11 @@ echo "You are a ROOT, let's install dependencies..."
 echo "=================== Install dependencies: Start ========================="
     # if there is `yum`, install dependencies
     if command -v yum >/dev/null 2>&1; then
-        yum install -y asciidoc autoconf cpio curl curl-devel expat-devel gcc gettext-devel openssl-devel perl perl-devel unzip zlib-devel
+        yum install -y autoconf curl curl-devel zlib-devel openssl-devel perl perl-devel cpio expat-devel gettext-devel unzip gcc autoconf
     # if there is `apt`, install dependencies
     elif command -v apt >/dev/null 2>&1; then
         apt update
-        apt install -y install asciidoc autoconf bison build-essential docbook2x flex gettext libcurl4-gnutls-dev libexpat1-dev libnl-dev libnl1 libreadline6-dev libssl-dev libssl-dev tcl tcl-dev tk zlib1g-dev
+        apt install -y autoconf build-essential gettext libcurl4-gnutls-dev libexpat1-dev libnl-dev libnl1 libreadline6-dev libssl-dev libssl-dev zlib1g-dev
     else
         echo "Did not find 'yum' or 'apt'..."
     fi
@@ -113,8 +106,8 @@ if command -v autoconf >/dev/null 2>&1; then
     autoconf
     ./configure --prefix="${git_install_prefix}"
 fi
-make -j${thread_count} ${git_make_objects_1} #CFLAGS="-liconv"
-make -j${thread_count} ${git_make_objects_2} #CFLAGS="-liconv"
+make -j${thread_count} all #CFLAGS="-liconv"
+make -j${thread_count} install #CFLAGS="-liconv"
 
 # error during compilation?
 if [ $? -ne 0 ]; then
