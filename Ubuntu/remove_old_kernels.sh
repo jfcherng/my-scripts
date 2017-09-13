@@ -1,4 +1,4 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
 
 sudo apt install -y byobu
 sudo purge-old-kernels --keep 0
