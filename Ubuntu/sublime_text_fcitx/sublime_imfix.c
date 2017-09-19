@@ -18,13 +18,14 @@
 /*for RTLD_NEXT*/
 #define _GNU_SOURCE
 
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
 #include <assert.h>
 #include <dlfcn.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -50,6 +51,13 @@ struct _GdkRegion {
 };
 
 GtkIMContext *local_context;
+
+// This function is added to prevent some bugs caused by subprocess inheriting `LD_PRELOAD` settings
+// For example, without it, `Preferences - Browse Packages` function won't work.
+void __attribute__((constructor)) on_load(void) {
+    // Clear `LD_PRELOAD` environment variable
+    putenv("LD_PRELOAD=");
+}
 
 // this func is interposed to support cursor position update.
 void
