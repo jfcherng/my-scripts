@@ -1,4 +1,1 @@
-general_scripts
-===============
-
-My personal and general scripts.
+My personal scripts.
