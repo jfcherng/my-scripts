@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+
 #---------#
 # configs #
 #---------#
@@ -16,6 +19,13 @@ st_search_dirs=(
     # Mac
     "/Applications/Sublime Text.app/Contents/MacOS"
 )
+
+
+#-------#
+# begin #
+#-------#
+
+pushd "${SCRIPT_DIR}" || exit
 
 
 #-------------------------------------------#
@@ -56,23 +66,41 @@ fi
 rm -rf "${package_tmp_dir}"
 mkdir -p "${package_tmp_dir}"
 
-cd "${package_src_dir}" || exit
-git fetch origin
-git checkout origin/master
-# traverse all package directories
+pushd "${package_src_dir}" || exit
+
+# update sources
+git checkout origin/master && git fetch && git reset --hard "@{upstream}"
+
+# traverse all packages
 for dir in */; do
     # strip the trailing slash in dir name
     dir=${dir//\/}
-    cd "${dir}" || exit
+    pushd "${dir}" || exit
+
     # the package name is the dir name
     zip -9r "../../${package_tmp_dir}/${dir}.sublime-package" ./*
-    cd .. || exit
+
+    popd || exit
 done
+
 git checkout -
-cd ..
+
+popd || exit
+
+
+#------------------#
+# replace packages #
+#------------------#
 
 echo "Update ST packages..."
 mv -f "${package_tmp_dir}"/*.sublime-package "${st_packages_dir}"
 
 echo "Clean up..."
 rm -rf "${package_tmp_dir}"
+
+
+#-----#
+# end #
+#-----#
+
+popd || exit

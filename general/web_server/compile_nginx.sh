@@ -4,8 +4,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com> #
 #------------------------------------------#
 
-SCIPRT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(nproc --all)
 NGINX_FLAGS=()
 
@@ -15,12 +14,13 @@ declare -A NGINX_CMD=(
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
 )
 
-pushd "${SCIPRT_DIR}" || exit
+pushd "${SCRIPT_DIR}" || exit
 
 # check repos
 for repoName in "${!NGINX_CMD[@]}"; do
     # clone new repos
-    if [ ! -d "${repoName}" ]; then
+    if [ ! -d "${repoName}/.git" ]; then
+        rm -rf "${repoName}"
         eval "${NGINX_CMD[$repoName]}" || exit
     # update existing repos
     else
@@ -43,7 +43,7 @@ if [ ! -d "openssl" ]; then
 fi
 
 # check jemalloc
-if hash jemalloc-config 2>/dev/null; then
+if command -v jemalloc-config >/dev/null 2>&1; then
     NGINX_FLAGS+=( "--with-ld-opt='-ljemalloc'" )
 fi
 
@@ -53,7 +53,7 @@ echo "==================================="
 
 pushd nginx || exit
 
-./auto/configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_v2_module --with-http_flv_module --with-openssl="${SCIPRT_DIR}/openssl" --add-module="${SCIPRT_DIR}/ngx_http_concat" --add-module="${SCIPRT_DIR}/ngx_http_trim" ${NGINX_FLAGS[@]}
+./auto/configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_v2_module --with-http_flv_module --with-openssl="${SCRIPT_DIR}/openssl" --add-module="${SCRIPT_DIR}/ngx_http_concat" --add-module="${SCRIPT_DIR}/ngx_http_trim" ${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" && make install
 

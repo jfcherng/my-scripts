@@ -17,9 +17,9 @@ account=YOUR_STUDENT_ID
 server=daisy.ee.nthu.edu.tw
 
 # some routine jobs
-grade=$(echo "$account" | sed -E 's/^([umd])([^1][0-9]|1[0-9]{2}).*/\1\2/')
-remoteDir=/home/$grade/$account
+grade=$(echo "${account}" | sed -E 's/^([umd])([^1][0-9]|1[0-9]{2}).*/\1\2/')
+remoteDir=/home/${grade}/${account}
 
-mkdir -p $mntDir
-fusermount -u $mntDir
-sshfs $account@$server:$remoteDir $mntDir -o allow_other
+mkdir -p "${mntDir}"
+fusermount -u "${mntDir}"
+sshfs "${account}@${server}:${remoteDir}" "${mntDir}" -o allow_other

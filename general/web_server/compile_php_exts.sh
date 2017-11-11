@@ -6,8 +6,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com> #
 #------------------------------------------#
 
-SCIPRT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(nproc --all)
 PHP_BASE_DIR=/usr/local/php71
 
@@ -22,7 +21,7 @@ declare -A PHP_EXTS_CMD=(
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
 )
 
-pushd "${SCIPRT_DIR}" || exit
+pushd "${SCRIPT_DIR}" || exit
 
 for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "==================================="
@@ -30,7 +29,8 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "==================================="
 
     # clone new repos
-    if [ ! -d "${PHP_EXT_NAME}" ]; then
+    if [ ! -d "${PHP_EXT_NAME}/.git" ]; then
+        rm -rf "${PHP_EXT_NAME}"
         eval "${PHP_EXTS_CMD[$PHP_EXT_NAME]}" || exit
     fi
 
