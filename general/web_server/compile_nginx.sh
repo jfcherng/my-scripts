@@ -10,6 +10,7 @@ NGINX_FLAGS=()
 
 declare -A NGINX_CMD=(
     ["nginx"]="git clone https://github.com/nginx/nginx.git"
+    ["ngx_headers_more"]="git clone https://github.com/openresty/headers-more-nginx-module.git ngx_headers_more"
     ["ngx_http_concat"]="git clone https://github.com/alibaba/nginx-http-concat.git ngx_http_concat"
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
 )
@@ -53,7 +54,7 @@ echo "==================================="
 
 pushd nginx || exit
 
-./auto/configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_v2_module --with-http_flv_module --with-openssl="${SCRIPT_DIR}/openssl" --add-module="${SCRIPT_DIR}/ngx_http_concat" --add-module="${SCRIPT_DIR}/ngx_http_trim" ${NGINX_FLAGS[@]}
+./auto/configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_v2_module --with-http_flv_module --with-openssl="${SCRIPT_DIR}/openssl" --add-module="${SCRIPT_DIR}/ngx_headers_more" --add-module="${SCRIPT_DIR}/ngx_http_concat" --add-module="${SCRIPT_DIR}/ngx_http_trim" ${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" && make install
 
