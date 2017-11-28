@@ -27,6 +27,7 @@ for repoName in "${!NGINX_CMD[@]}"; do
     else
         pushd "${repoName}" || exit
 
+        # fetch the latest source
         git submodule foreach git pull
         git fetch && git reset --hard "@{upstream}"
 
@@ -61,6 +62,7 @@ make -j "${THREAD_CNT}" && make install
 # clean up
 make clean
 git clean -df
+git checkout -- .
 
 popd || exit
 

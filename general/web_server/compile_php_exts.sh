@@ -46,8 +46,8 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     make -j "${THREAD_CNT}" && make install
 
     # clean up
-    make clean
     "${PHP_BASE_DIR}/bin/phpize" --clean
+    make clean
     git clean -df
     git checkout -- .
 
