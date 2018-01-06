@@ -28,7 +28,7 @@ for repoName in "${!NGINX_CMD[@]}"; do
         pushd "${repoName}" || exit
 
         # fetch the latest source
-        git submodule foreach git pull
+        git submodule foreach --recursive git pull
         git fetch && git reset --hard "@{upstream}"
 
         popd || exit
@@ -46,28 +46,41 @@ fi
 
 # check jemalloc
 if command -v jemalloc-config >/dev/null 2>&1; then
+    echo "[*] Compile NGINX with jemalloc"
     NGINX_FLAGS+=( "--with-ld-opt='-ljemalloc'" )
 fi
 
 echo "==================================="
-echo "Begin compile nginx ..."
+echo "Begin compile NGINX..."
 echo "==================================="
 
 pushd nginx || exit
 
-./auto/configure --user=www --group=www --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module --with-http_v2_module --with-http_flv_module --with-openssl="${SCRIPT_DIR}/openssl" --add-module="${SCRIPT_DIR}/ngx_headers_more" --add-module="${SCRIPT_DIR}/ngx_http_concat" --add-module="${SCRIPT_DIR}/ngx_http_trim" ${NGINX_FLAGS[@]}
+./auto/configure --prefix=/usr/local/nginx \
+--user=www --group=www \
+--with-http_stub_status_module \
+--with-http_ssl_module \
+--with-http_gzip_static_module \
+--with-http_realip_module \
+--with-http_v2_module \
+--with-http_flv_module \
+--with-openssl="${SCRIPT_DIR}/openssl" \
+--add-module="${SCRIPT_DIR}/ngx_headers_more" \
+--add-module="${SCRIPT_DIR}/ngx_http_concat" \
+--add-module="${SCRIPT_DIR}/ngx_http_trim" \
+${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" && make install
 
 # clean up
 make clean
-git clean -df
+git clean -dfx
 git checkout -- .
 
 popd || exit
 
 echo "==================================="
-echo "End compile nginx ..."
+echo "End compile NGINX..."
 echo "==================================="
 
 popd || exit
