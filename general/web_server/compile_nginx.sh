@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 #------------------------------------------#
+# This script compiles the latest NGINX.   #
+#                                          #
 # Author: Jack Cherng <jfcherng@gmail.com> #
 #------------------------------------------#
 
@@ -15,9 +17,18 @@ declare -A NGINX_CMD=(
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
 )
 
+
+#-------#
+# begin #
+#-------#
+
 pushd "${SCRIPT_DIR}" || exit
 
-# check repos
+
+#-------------#
+# check repos #
+#-------------#
+
 for repoName in "${!NGINX_CMD[@]}"; do
     # clone new repos
     if [ ! -d "${repoName}/.git" ]; then
@@ -35,7 +46,11 @@ for repoName in "${!NGINX_CMD[@]}"; do
     fi
 done
 
-# check openssl
+
+#---------------#
+# check openssl #
+#---------------#
+
 if [ ! -d "openssl" ]; then
     echo
     echo Directory "openssl" not found...
@@ -44,11 +59,20 @@ if [ ! -d "openssl" ]; then
     exit
 fi
 
-# check jemalloc
+
+#----------------#
+# check jemalloc #
+#----------------#
+
 if command -v jemalloc-config >/dev/null 2>&1; then
     echo "[*] Compile NGINX with jemalloc"
     NGINX_FLAGS+=( "--with-ld-opt='-ljemalloc'" )
 fi
+
+
+#---------------#
+# compile NGINX #
+#---------------#
 
 echo "==================================="
 echo "Begin compile NGINX..."
@@ -72,7 +96,11 @@ ${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" && make install
 
-# clean up
+
+#----------#
+# clean up #
+#----------#
+
 make clean
 git clean -dfx
 git checkout -- .
@@ -82,5 +110,10 @@ popd || exit
 echo "==================================="
 echo "End compile NGINX..."
 echo "==================================="
+
+
+#-----#
+# end #
+#-----#
 
 popd || exit

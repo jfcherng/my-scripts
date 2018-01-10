@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#------------------------------------------#
+# This script compiles git.                #
+#                                          #
+# Author: Jack Cherng <jfcherng@gmail.com> #
+#------------------------------------------#
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(nproc --all)
 
@@ -8,6 +14,11 @@ if [ "$(id -u)" != "0" ]; then
 else
     is_root=true
 fi
+
+
+#-------#
+# begin #
+#-------#
 
 pushd "${SCRIPT_DIR}" || exit
 
@@ -20,7 +31,6 @@ else
     git_install_prefix=$HOME/opt
 fi
 echo "This script will install git to '${git_install_prefix}'."
-echo "Author: Jack Cherng <jfcherng@gmail.com>"
 echo "========================================================================="
 
 
@@ -32,24 +42,47 @@ echo "Current git Version: ${git_ver_old}"
 echo "You can find version number from 'https://github.com/git/git/releases'"
 echo "Note: the latest build may not work properly!"
 
-# input version
-read -erp "What's the git version you want to install? (For example, '2.15.0' or 'latest'): " git_ver_new
+
+#--------------------------#
+# read option: git_ver_new #
+#--------------------------#
+
+read -erp "Which git version you want to install (such as '2.15.0' or 'latest'): " git_ver_new
 if [ "${git_ver_new}" = "" ]; then
-    echo "[Error] No git version is given."
+    echo "[*] No git version is given."
     exit 1
 fi
 
-# input thread counts
+
+#---------------------------#
+# read option: thread_count #
+#---------------------------#
+
 read -erp "Parallel compilation with thread counts (default = ${THREAD_CNT}): " thread_count
 if [ "${thread_count}" = "" ]; then
     thread_count=${THREAD_CNT}
 fi
 
+
+#--------------#
+# confirmation #
+#--------------#
+
 echo
-echo "You want to install git to '${git_ver_new}'."
+echo "==================================="
+echo "thread_count = ${thread_count}"
+echo "git_ver_new  = ${git_ver_new}"
+echo "==================================="
+echo
+echo "Is the above information correct?"
 echo "Press any key to start or Ctrl+C to cancel."
 read -rn 1 # wait for a key press
+echo
 
+
+#----------------------#
+# download source code #
+#----------------------#
 
 git_archive="git-${git_ver_new}.tar.gz"
 echo
@@ -74,6 +107,10 @@ fi
 echo "===================== Download Package: End ============================="
 
 
+#----------------------#
+# install dependencies #
+#----------------------#
+
 if [ "${is_root}" = true ]; then
 echo
 echo "You are a ROOT, let's install dependencies..."
@@ -94,21 +131,20 @@ echo "=================== Install dependencies: End ==========================="
 fi
 
 
-git_source_dir_name="git-${git_ver_new}"
+#-------------#
+# compile git #
+#-------------#
+
 echo
-echo "===================== Extract Package: Start ==========================="
+echo "===================== Compile git: Start ==========================="
+
+git_source_dir_name="git-${git_ver_new}"
 
 tar xvf "${git_archive}"
 if [ "${git_ver_new}" = "latest" ]; then
     # correct the source dir name
     mv git-master "${git_source_dir_name}"
 fi
-
-echo "===================== Extract Package: End ============================="
-
-
-echo
-echo "===================== Install Package: Start ==========================="
 
 mkdir -p "${git_install_prefix}"
 pushd "${git_source_dir_name}" || exit
@@ -140,7 +176,7 @@ done
 
 popd || exit
 
-echo "===================== Install Package: End ============================="
+echo "===================== Compile git: End ============================="
 
 
 git_ver_new=$("${git_install_prefix}/bin/git" --version | cut -d ' ' -f 3)
@@ -157,8 +193,16 @@ echo "========================================================================="
 echo
 
 
-# remove sources
+#----------------#
+# remove sources #
+#----------------#
+
 rm -f "${git_archive}"*
 rm -rf "${git_source_dir_name}"
+
+
+#-----#
+# end #
+#-----#
 
 popd || exit

@@ -7,8 +7,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # configs #
 #---------#
 
-package_src_dir="Sublime-Official-Packages"
-package_tmp_dir="Sublime-Official-Packages_tmp"
+package_src_dir=".Sublime-Official-Packages"
+package_tmp_dir=".Sublime-Official-Packages_tmp"
 package_remote_repo="https://github.com/sublimehq/Packages.git"
 
 st_search_dirs=(
@@ -37,9 +37,11 @@ st_packages_dir=""
 for st_search_dir in "${st_search_dirs[@]}"; do
     _st_packages_dir="${st_search_dir}/Packages"
     if [ -d "${_st_packages_dir}" ]; then
-        echo "[INFO] Find ST installation directory: '${_st_packages_dir}'"
+        echo "[INFO] Found ST installation directory: '${_st_packages_dir}'"
         st_packages_dir="${_st_packages_dir}"
         break
+    else
+        echo "[INFO] NOT found ST installation directory: '${_st_packages_dir}'"
     fi
 done
 
@@ -53,10 +55,8 @@ fi
 # get the latest package source #
 #-------------------------------#
 
-if [ ! -d "${package_src_dir}/.git" ]; then
-    rm -rf "${package_src_dir}"
-    git clone "${package_remote_repo}" "${package_src_dir}"
-fi
+rm -rf "${package_src_dir}"
+git clone --depth=1 "${package_remote_repo}" "${package_src_dir}"
 
 
 #------------------#
@@ -67,9 +67,6 @@ rm -rf "${package_tmp_dir}"
 mkdir -p "${package_tmp_dir}"
 
 pushd "${package_src_dir}" || exit
-
-# update sources
-git checkout origin/master && git fetch && git reset --hard "@{upstream}"
 
 # traverse all packages
 for dir in */; do
@@ -83,9 +80,9 @@ for dir in */; do
     popd || exit
 done
 
-git checkout -
-
 popd || exit
+
+rm -rf "${package_src_dir}"
 
 
 #------------------#

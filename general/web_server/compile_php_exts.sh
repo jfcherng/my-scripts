@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-#------------------------------------------#
-# This script ONLY works for PHP >= 7.0    #
-#                                          #
-# Author: Jack Cherng <jfcherng@gmail.com> #
-#------------------------------------------#
+#--------------------------------------------------#
+# This script compiles some extensions for PHP 7+. #
+#                                                  #
+# Author: Jack Cherng <jfcherng@gmail.com>         #
+#--------------------------------------------------#
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(nproc --all)
@@ -27,9 +27,18 @@ declare -A PHP_EXTS_CMD=(
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
 )
 
+
+#-------#
+# begin #
+#-------#
+
 pushd "${SCRIPT_DIR}" || exit
 
-# filter out useless PHP base directories
+
+#-----------------------------------------#
+# filter out useless PHP base directories #
+#-----------------------------------------#
+
 for IDX in "${!PHP_BASE_DIRS[@]}"; do
     PHP_BASE_DIR=${PHP_BASE_DIRS[$IDX]}
 
@@ -48,6 +57,11 @@ for IDX in "${!PHP_BASE_DIRS[@]}"; do
         fi
     done
 done
+
+
+#------------------------#
+# compile PHP extensions #
+#------------------------#
 
 for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "==================================="
@@ -89,5 +103,10 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "End compile '${PHP_EXT_NAME}'..."
     echo "==================================="
 done
+
+
+#-----#
+# end #
+#-----#
 
 popd || exit
