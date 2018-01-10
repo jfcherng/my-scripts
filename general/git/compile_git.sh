@@ -33,14 +33,14 @@ echo "You can find version number from 'https://github.com/git/git/releases'"
 echo "Note: the latest build may not work properly!"
 
 # input version
-read -rp "What's the git version you want to install? (For example, '2.15.0' or 'latest'): " git_ver_new
+read -erp "What's the git version you want to install? (For example, '2.15.0' or 'latest'): " git_ver_new
 if [ "${git_ver_new}" = "" ]; then
     echo "[Error] No git version is given."
     exit 1
 fi
 
 # input thread counts
-read -rp "Parallel compilation with thread counts (default = ${THREAD_CNT}): " thread_count
+read -erp "Parallel compilation with thread counts (default = ${THREAD_CNT}): " thread_count
 if [ "${thread_count}" = "" ]; then
     thread_count=${THREAD_CNT}
 fi
