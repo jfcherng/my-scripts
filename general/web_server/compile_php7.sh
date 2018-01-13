@@ -51,7 +51,13 @@ done
 # read option: php_branch #
 #-------------------------#
 
-read -erp "PHP branch name to be compiled (such as 'PHP-7.2'): " php_branch
+read -erp "PHP branch name or version to be compiled (such as 'PHP-7.2' or '7.2'): " php_branch
+
+# if php_branch is a version number, prepend "PHP-" to it
+if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
+    php_branch="PHP-${php_branch}"
+fi
+
 pushd "php-src" || exit
 git checkout "${php_branch}"
 if [ $? -ne 0 ]; then
