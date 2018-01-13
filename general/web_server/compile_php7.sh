@@ -84,6 +84,17 @@ if [ "${php_run_user}" = "" ]; then
 fi
 
 
+#-----------------------------#
+# read option: compile_libzip #
+#-----------------------------#
+
+read -erp "Compile libzip library (Y/n): " compile_libzip
+compile_libzip=${compile_libzip^^}
+if [ "${compile_libzip}" != "N" ]; then
+    compile_libzip="Y"
+fi
+
+
 #---------------------------#
 # read option: thread_count #
 #---------------------------#
@@ -100,6 +111,7 @@ fi
 
 echo
 echo "==================================="
+echo "compile_libzip  = ${compile_libzip}"
 echo "thread_count    = ${thread_count}"
 echo "php_branch      = ${php_branch}"
 echo "php_install_dir = ${php_install_dir}"
@@ -115,6 +127,8 @@ echo
 #-----------------#
 # compile libdzip #
 #-----------------#
+
+if [ "${compile_libzip}" = "Y" ]; then
 
 echo "==================================="
 echo "Begin compile 'libzip'..."
@@ -133,6 +147,8 @@ popd || exit
 echo "==================================="
 echo "End compile 'libzip'..."
 echo "==================================="
+
+fi
 
 
 #-------------#
