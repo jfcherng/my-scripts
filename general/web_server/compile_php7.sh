@@ -51,10 +51,14 @@ done
 # read option: php_branch #
 #-------------------------#
 
-read -erp "PHP branch name or version to be compiled (such as 'PHP-7.2' or '7.2'): " php_branch
+read -erp "PHP version or branch name to be compiled (such as '7.2' or 'master'): " php_branch
 
 # if php_branch is a version number, prepend "PHP-" to it
+php_install_dir_default=
 if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
+    # concat the major and the minor version numbers as php_version_path
+    php_version_path=$(echo "${php_branch}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
+    php_install_dir_default="/usr/local/php${php_version_path}"
     php_branch="PHP-${php_branch}"
 fi
 
@@ -72,10 +76,22 @@ popd || exit
 # read option: php_install_dir #
 #------------------------------#
 
-read -erp "Where to install PHP (such as '/usr/local/php72'): " php_install_dir
+if [ "${php_install_dir_default}" = "" ]; then
+    php_install_dir_hint="such as '/usr/local/php72'"
+else
+    php_install_dir_hint="default = '${php_install_dir_default}'"
+fi
+
+read -erp "Where to install PHP (${php_install_dir_hint}): " php_install_dir
+
 if [ "${php_install_dir}" = "" ]; then
-    echo "[*] Emtpy install dir is not allowed."
-    exit 1
+    php_install_dir=${php_install_dir_default}
+    if [ "${php_install_dir}" = "" ]; then
+        echo "[*] Emtpy install dir is not allowed."
+        exit 1
+    else
+        echo "[*] Use '${php_install_dir}' as the default install path."
+    fi
 fi
 
 
@@ -83,9 +99,12 @@ fi
 # read option: php_run_user #
 #---------------------------#
 
-read -erp "Which user to launch PHP-FPM (such as 'www'): " php_run_user
+php_run_user_default="www"
+
+read -erp "Which user to launch PHP-FPM (default = '${php_run_user_default}'): " php_run_user
+
 if [ "${php_run_user}" = "" ]; then
-    php_run_user="www"
+    php_run_user=${php_run_user_default}
     echo "[*] Use '${php_run_user}' as the default user."
 fi
 
@@ -95,6 +114,7 @@ fi
 #-----------------------------#
 
 read -erp "Compile libzip library (Y/n): " compile_libzip
+
 compile_libzip=${compile_libzip^^}
 if [ "${compile_libzip}" != "N" ]; then
     compile_libzip="Y"
@@ -106,6 +126,7 @@ fi
 #---------------------------#
 
 read -erp "Parallel compilation with thread counts (default = ${THREAD_CNT}): " thread_count
+
 if [ "${thread_count}" = "" ]; then
     thread_count=${THREAD_CNT}
 fi
