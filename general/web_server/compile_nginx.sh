@@ -75,7 +75,7 @@ fi
 #---------------#
 
 echo "==================================="
-echo "Begin compile NGINX..."
+echo "Begin compile 'NGINX'..."
 echo "==================================="
 
 pushd nginx || exit
@@ -108,7 +108,7 @@ git checkout -- .
 popd || exit
 
 echo "==================================="
-echo "End compile NGINX..."
+echo "End compile 'NGINX'..."
 echo "==================================="
 
 
