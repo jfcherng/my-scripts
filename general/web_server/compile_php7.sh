@@ -59,12 +59,12 @@ if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
 fi
 
 pushd "php-src" || exit
-git checkout "${php_branch}"
+git fetch origin
+git rev-parse --verify "origin/${php_branch}"
 if [ $? -ne 0 ]; then
     echo "[*] PHP branch '${php_branch}' dose not exist."
     exit 1
 fi
-git checkout -
 popd || exit
 
 
