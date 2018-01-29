@@ -9,7 +9,8 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 DEBUG=false
 TEMP_DIR=".Sublime-Official-Packages"
-PKG_REMOTE_REPO="https://github.com/sublimehq/Packages.git"
+PKG_GITHUB_URL="https://github.com/sublimehq/Packages"
+PKG_REMOTE_REPO="${PKG_GITHUB_URL}.git"
 
 ST_INSTALL_DIRS=(
     # Windows
@@ -66,13 +67,40 @@ if [ "${st_pkgs_dir}" = "" ]; then
 fi
 
 
+#----------------------------#
+# read option: branch_or_tag #
+#----------------------------#
+
+echo "[INFO] You could check branches/tags on '${PKG_GITHUB_URL}/releases'"
+read -erp "Branch or tag to be used (such as 'v3152', default = 'master'): " branch_or_tag
+
+if [ "${branch_or_tag}" = "" ]; then
+    branch_or_tag="master"
+fi
+
+if [[ "${branch_or_tag}" =~ ^[0-9]+$ ]]; then
+    branch_or_tag="v${branch_or_tag}"
+fi
+
+
 #-------------------------------#
 # get the latest package source #
 #-------------------------------#
 
 repo_dir="repo"
 
-git clone --depth=1 "${PKG_REMOTE_REPO}" "${repo_dir}"
+rm -rf "${repo_dir}"
+
+echo "[INFO] Downloading repository..."
+
+git clone --depth=1 --branch="${branch_or_tag}" "${PKG_REMOTE_REPO}" "${repo_dir}"
+
+if [ $? -eq 0 ]; then
+    echo "[INFO] Download repository successfully!"
+else
+    echo "[Error] Fail to checkout the branch/tag '${branch_or_tag}'..."
+    exit 1
+fi
 
 
 #------------------#
@@ -85,13 +113,18 @@ mkdir -p "${packed_pkgs_dir}"
 
 pushd "${repo_dir}" || exit
 
+echo "[INFO] Pack up packages..."
+
 # traverse all packages in the repo
 for dir in */; do
     pushd "${dir}" || exit
 
     pkg_name=${dir%/}
 
-    echo "[INFO] Pack up '${pkg_name}'..."
+    if [[ "${DEBUG}" = "true" ]]; then
+        echo "[INFO] Pack up '${pkg_name}'..."
+    fi
+
     zip -9r ${zip_quiet} "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" ./*
 
     popd || exit
@@ -104,7 +137,7 @@ popd || exit
 # replace packages #
 #------------------#
 
-echo "[INFO] Update ST packages..."
+echo "[INFO] Update ST packages to ${branch_or_tag}..."
 cp -r "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
 
 
