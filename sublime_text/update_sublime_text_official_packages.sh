@@ -26,7 +26,7 @@ ST_INSTALL_DIRS=(
 # begin #
 #-------#
 
-if [[ "${DEBUG}" != "true" ]]; then
+if ${DEBUG}; then
     zip_quiet="-q"
 
     pushd() {
@@ -121,7 +121,7 @@ for dir in */; do
 
     pkg_name=${dir%/}
 
-    if [[ "${DEBUG}" = "true" ]]; then
+    if ${DEBUG}; then
         echo "[INFO] Pack up '${pkg_name}'..."
     fi
 
