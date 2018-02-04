@@ -80,21 +80,24 @@ echo "==================================="
 
 pushd nginx || exit
 
-./auto/configure --prefix=/usr/local/nginx \
---user=www --group=www \
---with-http_stub_status_module \
---with-http_ssl_module \
+./auto/configure \
+--prefix=/usr/local/nginx \
+--user=www \
+--group=www \
+--with-http_flv_module \
 --with-http_gzip_static_module \
 --with-http_realip_module \
+--with-http_ssl_module \
+--with-http_stub_status_module \
 --with-http_v2_module \
---with-http_flv_module \
 --with-openssl="${SCRIPT_DIR}/openssl" \
 --add-module="${SCRIPT_DIR}/ngx_headers_more" \
 --add-module="${SCRIPT_DIR}/ngx_http_concat" \
 --add-module="${SCRIPT_DIR}/ngx_http_trim" \
 ${NGINX_FLAGS[@]}
 
-make -j "${THREAD_CNT}" && make install
+make -j "${THREAD_CNT}" || exit
+make install || exit
 
 
 #----------#

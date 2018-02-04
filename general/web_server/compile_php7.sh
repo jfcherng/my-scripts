@@ -166,7 +166,9 @@ pushd "libzip" || exit
 rm -rf "build" && mkdir "build"
 pushd "build" || exit
 cmake .. || exit
-make -j "${thread_count}" && make install
+make clean
+make -j "${thread_count}" || exit
+make install || exit
 popd || exit
 
 popd || exit
@@ -198,19 +200,48 @@ git fetch && git reset --hard "@{upstream}"
 --prefix="${php_install_dir}" \
 --with-config-file-path="${php_install_dir}/etc" \
 --with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
---with-curl="/usr/local" --with-libzip \
---with-fpm-group="${php_run_user}" --with-fpm-user="${php_run_user}" \
---with-freetype-dir --with-gd --with-gettext \
---with-iconv-dir="/usr/local" --with-jpeg-dir --with-libxml-dir="/usr" \
---with-mcrypt --with-mhash --with-mysqli=mysqlnd --with-openssl \
---with-pdo-mysql=mysqlnd --with-png-dir --with-xmlrpc --with-xsl --with-zlib \
---enable-bcmath --enable-exif --enable-fpm --enable-ftp --enable-gd-native-ttf \
---enable-inline-optimization --enable-intl --enable-mbregex --enable-mbstring \
---enable-mysqlnd --enable-pcntl --enable-shmop --enable-soap --enable-sockets \
---enable-sysvsem --enable-xml --enable-zip \
---disable-debug --disable-rpath --disable-fileinfo
+--with-curl="/usr/local" \
+--with-fpm-group="${php_run_user}" \
+--with-fpm-user="${php_run_user}" \
+--with-libzip \
+--with-freetype-dir \
+--with-gettext \
+--with-gz \
+--with-iconv-dir="/usr/local" \
+--with-jpeg-dir \
+--with-libxml-dir="/usr" \
+--with-mcrypt \
+--with-mhash \
+--with-mysqli=mysqlnd \
+--with-openssl \
+--with-pdo-mysql=mysqlnd \
+--with-png-dir \
+--with-xmlrpc \
+--with-xsl \
+--with-zlib \
+--enable-bcmath \
+--enable-exif \
+--enable-fpm \
+--enable-ftp \
+--enable-gd-native-ttf \
+--enable-inline-optimization \
+--enable-intl \
+--enable-mbregex \
+--enable-mbstring \
+--enable-mysqlnd \
+--enable-pcntl \
+--enable-shmop \
+--enable-soap \
+--enable-sockets \
+--enable-sysvsem \
+--enable-xml \
+--enable-zip \
+--disable-debug \
+--disable-rpath \
+--disable-fileinfo
 
-make -j "${thread_count}" ZEND_EXTRA_LIBS='-liconv' && make install
+make -j "${thread_count}" ZEND_EXTRA_LIBS='-liconv' || exit
+make install || exit
 
 make clean
 git clean -dfx
