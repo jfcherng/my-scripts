@@ -201,7 +201,7 @@ git fetch && git reset --hard "@{upstream}"
 --with-curl="/usr/local" --with-libzip \
 --with-fpm-group="${php_run_user}" --with-fpm-user="${php_run_user}" \
 --with-freetype-dir --with-gd --with-gettext \
---with-iconv-dir="/usr/local"--with-jpeg-dir --with-libxml-dir="/usr" \
+--with-iconv-dir="/usr/local" --with-jpeg-dir --with-libxml-dir="/usr" \
 --with-mcrypt --with-mhash --with-mysqli=mysqlnd --with-openssl \
 --with-pdo-mysql=mysqlnd --with-png-dir --with-xmlrpc --with-xsl --with-zlib \
 --enable-bcmath --enable-exif --enable-fpm --enable-ftp --enable-gd-native-ttf \
