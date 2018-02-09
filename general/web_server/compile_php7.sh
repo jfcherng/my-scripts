@@ -54,21 +54,26 @@ done
 read -erp "PHP version or branch name to be compiled (such as '7.2' or 'master'): " php_branch
 
 # if php_branch is a version number, prepend "PHP-" to it
-php_install_dir_default=
 if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
-    # concat the major and the minor version numbers as php_version_path
-    php_version_path=$(echo "${php_branch}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
-    php_install_dir_default="/usr/local/php${php_version_path}"
     php_branch="PHP-${php_branch}"
 fi
 
 pushd "php-src" || exit
+
 git fetch origin
 git rev-parse --verify "origin/${php_branch}"
 if [ $? -ne 0 ]; then
     echo "[*] PHP branch '${php_branch}' dose not exist."
     exit 1
 fi
+
+# such as "7.2.2"
+php_version=$(git show "${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+# such as "72"
+php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
+# such as "/usr/local/php72"
+php_install_dir_default="/usr/local/php${php_version_path}"
+
 popd || exit
 
 
@@ -76,22 +81,11 @@ popd || exit
 # read option: php_install_dir #
 #------------------------------#
 
-if [ "${php_install_dir_default}" = "" ]; then
-    php_install_dir_hint="such as '/usr/local/php72'"
-else
-    php_install_dir_hint="default = '${php_install_dir_default}'"
-fi
-
-read -erp "Where to install PHP (${php_install_dir_hint}): " php_install_dir
+read -erp "Where to install PHP (default = '${php_install_dir_default}'): " php_install_dir
 
 if [ "${php_install_dir}" = "" ]; then
     php_install_dir=${php_install_dir_default}
-    if [ "${php_install_dir}" = "" ]; then
-        echo "[*] Emtpy install dir is not allowed."
-        exit 1
-    else
-        echo "[*] Use '${php_install_dir}' as the default install path."
-    fi
+    echo "[*] Use '${php_install_dir}' as the default install path."
 fi
 
 
