@@ -25,10 +25,10 @@ pushd "${SCRIPT_DIR}" || exit
 echo "========================================================================="
 if [ "${is_root}" = true ]; then
     echo "[INFO] You are 'root'!!!"
-    git_install_prefix=/usr/local
+    git_install_prefix="/usr/local"
 else
     echo "[INFO] You are not 'root'..."
-    git_install_prefix=$HOME/opt
+    git_install_prefix="${HOME}/opt"
 fi
 echo "This script will install git to '${git_install_prefix}'."
 echo "========================================================================="
@@ -140,18 +140,22 @@ echo "===================== Compile git: Start ==========================="
 
 git_source_dir_name="git-${git_ver_new}"
 
-tar xvf "${git_archive}"
+echo "Decompressing tarball..."
+
+tar xf "${git_archive}"
 if [ "${git_ver_new}" = "latest" ]; then
     # correct the source dir name
     mv git-master "${git_source_dir_name}"
 fi
+
+echo "Decompressing tarball... Done"
 
 mkdir -p "${git_install_prefix}"
 pushd "${git_source_dir_name}" || exit
 
 # if there is autoconf, we use it
 if command -v autoconf >/dev/null 2>&1; then
-    autoconf
+    autoconf || exit 1
     ./configure --prefix="${git_install_prefix}"
 fi
 make -j "${thread_count}" all #CFLAGS="-liconv"
