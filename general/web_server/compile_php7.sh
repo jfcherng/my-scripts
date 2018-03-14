@@ -68,7 +68,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # such as "7.2.2"
-php_version=$(git show "${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+php_version=$(git show "origin/${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 # such as "72"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
 # such as "/usr/local/php72"
@@ -200,7 +200,6 @@ git fetch && git reset --hard "@{upstream}"
 --with-libzip \
 --with-freetype-dir \
 --with-gettext \
---with-gz \
 --with-iconv-dir="/usr/local" \
 --with-jpeg-dir \
 --with-libxml-dir="/usr" \
@@ -217,7 +216,6 @@ git fetch && git reset --hard "@{upstream}"
 --enable-exif \
 --enable-fpm \
 --enable-ftp \
---enable-gd-native-ttf \
 --enable-inline-optimization \
 --enable-intl \
 --enable-mbregex \
