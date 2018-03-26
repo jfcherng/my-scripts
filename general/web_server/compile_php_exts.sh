@@ -25,6 +25,7 @@ declare -A PHP_EXTS_CMD=(
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
+    ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
 )
 
 
@@ -62,6 +63,12 @@ done
 #------------------------#
 # compile PHP extensions #
 #------------------------#
+
+BUILD_DIR="${SCRIPT_DIR}/php_exts_clone"
+
+mkdir -p "${BUILD_DIR}"
+
+pushd "${BUILD_DIR}" || exit
 
 for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "==================================="
@@ -103,6 +110,8 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "End compile '${PHP_EXT_NAME}'..."
     echo "==================================="
 done
+
+popd || exit
 
 
 #-----#
