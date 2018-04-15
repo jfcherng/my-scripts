@@ -21,6 +21,7 @@ declare -A PHP_EXTS_CMD=(
     ["ast"]="git clone https://github.com/nikic/php-ast.git ast"
     ["ds"]="git clone https://github.com/php-ds/extension.git ds"
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
+    ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
