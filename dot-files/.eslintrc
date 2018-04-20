@@ -1,0 +1,35 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true
+    },
+    "globals": {
+        "$": true,
+        "_": true,
+        "autosize": true,
+        "axios": true,
+        "ClipboardJS": true,
+        "CodeMirror": true,
+        "domtoimage": true,
+        "jQuery": true,
+        "jwplayer": true,
+        "store": true,
+        "swal": true,
+        "timeago": true,
+        "toastr": true,
+        "videojs": true,
+        "Vue": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": ["error", 2, {"SwitchCase": 1} ],
+        "linebreak-style": ["error", "unix"],
+        "semi": ["error"],
+        "no-console": "off",
+        "no-constant-condition": "off",
+        "no-empty": ["warn"],
+        "no-irregular-whitespace": ["warn"],
+        "no-unused-vars": ["warn"]
+    }
+}
