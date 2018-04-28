@@ -1,0 +1,45 @@
+#!/bin/tcsh
+
+set scriptDir=/opt/shell-script
+
+umask 002
+
+# Customized shell promt
+alias precmd "source $scriptDir/git-prompt-set.tcsh"
+
+# git completion
+source "$scriptDir/git-completion.tcsh"
+set autolist=ambiguous
+
+setenv LD_LIBRARY_PATH
+setenv C_INCLUDE_PATH
+setenv CPLUS_INCLUDE_PATH
+
+setenv PATH "/usr/local/mysql/bin:/usr/local/php7/bin:/usr/local/nginx/sbin:/usr/local/php/bin:$PATH"
+setenv PATH "$HOME/opt/bin:/opt/bin:$PATH"
+setenv PATH "$HOME/usr/local/bin:/usr/local/bin:$PATH"
+setenv PATH "/opt/sublime_text/bin_linux:$PATH"
+
+# EE6470
+setenv EE6470 "${HOME}/ee6470"
+
+# SystemC
+setenv SYSTEMC_HOME "/usr/cadtool/systemc-2.3"
+setenv LD_LIBRARY_PATH "${SYSTEMC_HOME}/lib-linux:${LD_LIBRARY_PATH}"
+setenv LD_LIBRARY_PATH "${SYSTEMC_HOME}/lib-linux64:${LD_LIBRARY_PATH}"
+setenv C_INCLUDE_PATH "$SYSTEMC_HOME/include"
+setenv CPLUS_INCLUDE_PATH "$SYSTEMC_HOME/include"
+
+##########
+# My App #
+##########
+alias ls 'ls --color=auto'
+alias grep 'grep -n --color=auto'
+alias fgrep 'fgrep -n --color=auto'
+alias egrep 'egrep -n --color=auto'
+alias ll 'ls -alFh --color=auto'
+alias l 'll'
+alias ssh 'ssh -c arcfour,blowfish-cbc -XC'
+alias g 'git'
+alias gsync 'git fetch && git reset --hard origin/`git rev-parse --abbrev-ref HEAD`'
+

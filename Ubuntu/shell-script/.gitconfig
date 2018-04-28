@@ -1,0 +1,91 @@
+[user]
+	name = Jack Cherng
+	email = jfcherng@gmail.com
+[color]
+	ui = true
+[alias]
+	co = checkout
+	ci = commit
+	st = status --show-stash
+	br = branch -vv
+	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
+	rb = rebase
+	rs = reset
+	ft = fetch
+	a = add
+	d = diff --patch-with-stat
+	dt = difftool
+	m = merge
+	mt = mergetool
+	bl = blame
+	cl = clean
+	chp = cherry-pick
+	fp = format-patch
+	sync = ! git fetch && git reset --hard @{upstream}
+	sh = show --patch-with-stat
+	contributors = shortlog --summary --numbered
+	grp = grep -n --color -E
+	pushf = push --force-with-lease
+[core]
+	autocrlf = false
+	editor = vim
+	quotepath = false
+	ignorecase = false
+	safecrlf = false
+	filemode = true
+	pager = diff-so-fancy | less --tabs=4 -RFX
+	hooksPath = .githooks
+	attributesfile = ~/.gitattributes
+[push]
+	default = simple
+[i18n]
+	commitencoding = utf-8
+[gui]
+	encoding = utf-8
+[diff]
+	tool = bc
+	algorithm = patience
+[difftool]
+	bc3 = trustExitCode
+	prompt = false
+[merge]
+	tool = bc
+[mergetool]
+	bc3 = trustExitCode
+	prompt = false
+[difftool "bc"]
+	path = bcompare
+[mergetool "bc"]
+	path = bcompare
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = 227
+	frag = magenta bold
+	commit = 227 bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[diff "ppt"]
+	textconv = catppt
+[diff "xls"]
+	textconv = xls2txt
+[diff "odt"]
+	textconv = odt2txt
+[diff "doc"]
+	textconv = catdoc
+[diff "pandoc"]
+	textconv = pandoc --to=markdown
+[diff "catdoc"]
+	textconv = catdoc
+[diff "catppt"]
+	textconv = catppt
+[diff "xls2txt"]
+	textconv = xls2txt
+[diff "odt2txt"]
+	textconv = odt2txt
+[diff "xdoc2txt"]
+	textconv = xdoc2txt -8
