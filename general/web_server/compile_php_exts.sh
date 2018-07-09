@@ -25,8 +25,10 @@ declare -A PHP_EXTS_CMD=(
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
+    ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
+    ["yp"]="git clone https://github.com/php/pecl-networking-yp.git yp"
 )
 
 
