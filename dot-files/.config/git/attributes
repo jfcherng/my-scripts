@@ -1,0 +1,9 @@
+
+*.doc diff=pandoc
+*.xls diff=pandoc
+*.ppt diff=pandoc
+*.odt diff=pandoc
+*.docx diff=pandoc
+*.xlsx diff=pandoc
+*.pptx diff=pandoc
+*.pdf diff=pandoc
