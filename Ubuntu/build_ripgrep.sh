@@ -12,7 +12,8 @@ if [ ! -d "ripgrep/.git" ]; then
 fi
 
 pushd ripgrep || exit
-git checkout origin/master && git fetch && git reset --hard "@{upstream}"
+
+git fetch --all -p && git checkout origin/master && git reset --hard "@{upstream}"
 
 cargo build --release
 ./target/release/rg --version
