@@ -4,7 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 pushd "${SCRIPT_DIR}" || exit
 
-sudo apt install cargo
+sudo apt install -y cargo
 
 if [ ! -d "ripgrep/.git" ]; then
     rm -rf "ripgrep"
