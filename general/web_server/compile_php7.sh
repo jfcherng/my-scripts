@@ -185,8 +185,9 @@ echo "==================================="
 pushd "php-src" || exit
 
 git checkout "${php_branch}"
+git fetch --all -p && git reset --hard "@{upstream}"
+git submodule init
 git submodule foreach --recursive git pull
-git fetch && git reset --hard "@{upstream}"
 
 ./buildconf --force
 

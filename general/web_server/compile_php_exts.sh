@@ -87,8 +87,9 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     pushd "${PHP_EXT_NAME}/" || exit
 
     # fetch the latest source
+    git fetch --all -p && git reset --hard "@{upstream}"
+    git submodule init
     git submodule foreach --recursive git pull
-    git fetch && git reset --hard "@{upstream}"
 
     for PHP_BASE_DIR in "${PHP_BASE_DIRS[@]}"; do
         # paths
