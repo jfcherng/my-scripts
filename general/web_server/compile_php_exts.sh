@@ -14,6 +14,7 @@ PHP_BASE_DIRS=(
     "/usr/local/php71"
     "/usr/local/php72"
     "/usr/local/php73"
+    "/usr/local/php-jit"
 )
 
 declare -A PHP_EXTS_CMD=(
