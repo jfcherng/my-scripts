@@ -25,8 +25,9 @@ sudo make install
 
 # cleanup
 make clean
-git clean -dfx
+git checkout -
 git checkout -- .
+git clean -dfx
 
 popd || exit
 
