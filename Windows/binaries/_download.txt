@@ -1,1 +1,2 @@
 wget.exe: https://eternallybored.org/misc/wget/
+zip.exe & unzip.exe: ftp://ftp.info-zip.org/pub/infozip/win32/
