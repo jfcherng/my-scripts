@@ -69,9 +69,9 @@ fi
 
 # such as "7.2.2"
 php_version=$(git show "origin/${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-# such as "72"
+# such as "7.2.2" => "72"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
-# such as "/usr/local/php72"
+# such as "72" => "/usr/local/php72"
 php_install_dir_default="/usr/local/php${php_version_path}"
 
 popd || exit
@@ -179,6 +179,25 @@ fi
 #-------------#
 
 echo "==================================="
+echo "Begin install 'PHP' dependencies..."
+echo "==================================="
+
+# yum
+if command -v yum >/dev/null 2>&1; then
+    yum install -y gmp-devel
+# apt
+elif command -v apt >/dev/null 2>&1; then
+    apt update
+    apt install -y libgmp-dev
+else
+    echo "Could not find 'yum' or 'apt'..."
+fi
+
+echo "==================================="
+echo "End install 'PHP' dependencies..."
+echo "==================================="
+
+echo "==================================="
 echo "Begin compile 'PHP'..."
 echo "==================================="
 
@@ -200,6 +219,7 @@ git submodule foreach --recursive git pull
 --with-fpm-user="${php_run_user}" \
 --with-libzip \
 --with-freetype-dir \
+--with-gmp \
 --with-gettext \
 --with-iconv-dir="/usr/local" \
 --with-jpeg-dir \
