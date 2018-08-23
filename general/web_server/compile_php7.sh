@@ -184,11 +184,24 @@ echo "==================================="
 
 # yum
 if command -v yum >/dev/null 2>&1; then
-    yum install -y gmp-devel
+    yum install -y \
+        bzip2 bzip2-devel \
+        curl curl-devel \
+        freetype-devel \
+        gmp-devel \
+        icu libicu libicu-devel \
+        libjpeg-devel libpng-devel \
+        libxml2 libxml2-devel \
+        libxslt libxslt-devel \
+        ncurses ncurses-devel \
+        pcre-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
-    apt install -y libgmp-dev
+    apt install -y \
+        bzip2 bzip2-dev \
+        libgmp-dev \
+        libxml2 libxml2-dev
 else
     echo "Could not find 'yum' or 'apt'..."
 fi
