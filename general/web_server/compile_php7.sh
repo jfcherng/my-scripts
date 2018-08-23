@@ -214,6 +214,16 @@ echo "==================================="
 echo "Begin compile 'PHP'..."
 echo "==================================="
 
+# update library link paths
+ldconfig
+
+extra_make_flags=()
+
+# if we could link to the iconv library, add a flag for it
+if ldconfig -p | grep libiconv >/dev/null 2>&1; then
+    extra_make_flags+=("ZEND_EXTRA_LIBS='-liconv'")
+fi
+
 pushd "php-src" || exit
 
 git checkout "${php_branch}"
@@ -266,7 +276,7 @@ git submodule foreach --recursive git pull
 --disable-rpath \
 --disable-fileinfo
 
-make -j "${thread_count}" ZEND_EXTRA_LIBS='-liconv' || exit
+make -j "${thread_count}" "${extra_make_flags[@]}" || exit
 make install || exit
 
 make clean
