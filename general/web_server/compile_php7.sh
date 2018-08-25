@@ -8,6 +8,7 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(nproc --all)
+MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 
 declare -A PHP_CMD=(
     ["libzip"]="git clone https://github.com/nih-at/libzip.git"
@@ -185,16 +186,18 @@ echo "==================================="
 # yum
 if command -v yum >/dev/null 2>&1; then
     yum install -y \
+        aspell-devel \
         bzip2 bzip2-devel \
         curl curl-devel \
         freetype-devel \
         gmp-devel \
         icu libicu libicu-devel \
-        libjpeg-devel libpng-devel \
+        libjpeg-devel libpng-devel libwebp-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
         ncurses ncurses-devel \
-        pcre-devel
+        pcre-devel \
+        readline-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
@@ -217,11 +220,17 @@ echo "==================================="
 # update library link paths
 ldconfig
 
-extra_make_flags=()
+LOW_MEMORY_FLAGS=()
+
+if [ "${MEMSIZE_MB}" -lt "256" ]; then
+    LOW_MEMORY_FLAGS+=('--disable-fileinfo')
+fi
+
+ZEND_EXTRA_LIBS=()
 
 # if we could link to the iconv library, add a flag for it
 if ldconfig -p | grep libiconv >/dev/null 2>&1; then
-    extra_make_flags+=("ZEND_EXTRA_LIBS='-liconv'")
+    ZEND_EXTRA_LIBS+=('-liconv')
 fi
 
 pushd "php-src" || exit
@@ -233,50 +242,51 @@ git submodule foreach --recursive git pull
 
 ./buildconf --force
 
-./configure \
---prefix="${php_install_dir}" \
---with-config-file-path="${php_install_dir}/etc" \
---with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
---with-curl="/usr/local" \
---with-fpm-group="${php_run_user}" \
---with-fpm-user="${php_run_user}" \
---with-libzip \
---with-freetype-dir \
---with-gmp \
---with-gettext \
---with-iconv-dir="/usr/local" \
---with-jpeg-dir \
---with-libxml-dir="/usr" \
---with-mcrypt \
---with-mhash \
---with-mysqli=mysqlnd \
---with-openssl \
---with-pdo-mysql=mysqlnd \
---with-png-dir \
---with-xmlrpc \
---with-xsl \
---with-zlib \
+./configure --prefix="${php_install_dir}" \
+--disable-debug \
+--disable-rpath \
 --enable-bcmath \
+--enable-calendar \
 --enable-exif \
 --enable-fpm \
 --enable-ftp \
+--enable-gd-native-ttf \
 --enable-inline-optimization \
 --enable-intl \
---enable-mbregex \
---enable-mbstring \
+--enable-mbregex --enable-mbstring \
 --enable-mysqlnd \
 --enable-pcntl \
 --enable-shmop \
 --enable-soap \
 --enable-sockets \
---enable-sysvsem \
+--enable-sysvmsg --enable-sysvsem --enable-sysvshm \
+--enable-wddx \
 --enable-xml \
 --enable-zip \
---disable-debug \
---disable-rpath \
---disable-fileinfo
+--with-bz2 \
+--with-config-file-path="${php_install_dir}/etc" \
+--with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
+--with-curl="/usr/local" \
+--with-fpm-group="${php_run_user}" \
+--with-fpm-user="${php_run_user}" \
+--with-freetype-dir \
+--with-gd --with-jpeg-dir --with-png-dir --with-webp-dir \
+--with-gettext \
+--with-gmp \
+--with-iconv-dir="/usr/local" \
+--with-libxml-dir="/usr" \
+--with-libzip \
+--with-mhash \
+--with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+--with-openssl \
+--with-pspell \
+--with-readline \
+--with-xmlrpc \
+--with-xsl \
+--with-zlib \
+${LOW_MEMORY_FLAGS[*]}
 
-make -j "${thread_count}" "${extra_make_flags[@]}" || exit
+make -j "${thread_count}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" || exit
 make install || exit
 
 make clean
