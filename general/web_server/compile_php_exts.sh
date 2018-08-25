@@ -25,6 +25,7 @@ declare -A PHP_EXTS_CMD=(
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git"
+    ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
     ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
