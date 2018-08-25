@@ -186,7 +186,7 @@ echo "==================================="
 # yum
 if command -v yum >/dev/null 2>&1; then
     yum install -y \
-        aspell-devel \
+        aspell-en aspell-devel \
         bzip2 bzip2-devel \
         curl curl-devel \
         freetype-devel \
@@ -250,11 +250,9 @@ git submodule foreach --recursive git pull
 --enable-exif \
 --enable-fpm \
 --enable-ftp \
---enable-gd-native-ttf \
 --enable-inline-optimization \
 --enable-intl \
 --enable-mbregex --enable-mbstring \
---enable-mysqlnd \
 --enable-pcntl \
 --enable-shmop \
 --enable-soap \
@@ -269,15 +267,14 @@ git submodule foreach --recursive git pull
 --with-curl="/usr/local" \
 --with-fpm-group="${php_run_user}" \
 --with-fpm-user="${php_run_user}" \
---with-freetype-dir \
---with-gd --with-jpeg-dir --with-png-dir --with-webp-dir \
+--with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --with-webp-dir --enable-gd-native-ttf \
 --with-gettext \
 --with-gmp \
 --with-iconv-dir="/usr/local" \
 --with-libxml-dir="/usr" \
 --with-libzip \
 --with-mhash \
---with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+--with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
 --with-openssl \
 --with-pspell \
 --with-readline \

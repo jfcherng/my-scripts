@@ -126,11 +126,9 @@ pushd "${php_src_dir}" || exit
 --enable-exif \
 --enable-fpm \
 --enable-ftp \
---enable-gd-native-ttf \
 --enable-inline-optimization \
 --enable-intl \
 --enable-mbregex --enable-mbstring \
---enable-mysqlnd \
 --enable-pcntl \
 --enable-shmop \
 --enable-soap \
@@ -145,15 +143,14 @@ pushd "${php_src_dir}" || exit
 --with-curl="/usr/local" \
 --with-fpm-group="${php_run_user}" \
 --with-fpm-user="${php_run_user}" \
---with-freetype-dir \
---with-gd --with-jpeg-dir --with-png-dir \
+--with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf \
 --with-gettext \
 --with-gmp \
 --with-iconv-dir="/usr/local" \
 --with-libxml-dir="/usr" \
 --with-libzip \
 --with-mhash \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd \
+--with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
 --with-openssl \
 --with-pspell \
 --with-readline \
