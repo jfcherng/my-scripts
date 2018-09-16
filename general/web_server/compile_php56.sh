@@ -16,7 +16,7 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 #----------------#
 
 bison_version="2.7.1"
-php_src_dir="php-5.6.37"
+php_src_dir="php-5.6.38"
 php_run_user=www
 php_install_dir=/usr/local/php56
 
