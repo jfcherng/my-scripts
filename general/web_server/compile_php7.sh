@@ -240,6 +240,9 @@ git fetch --all -p && git reset --hard "@{upstream}"
 git submodule init
 git submodule foreach --recursive git pull
 
+# use the git commit hash to replace the "-dev" in the PHP version tag
+sed -i"" -E "s/-dev/-dev.$(git rev-parse --short HEAD)/g" ./configure.ac
+
 ./buildconf --force
 
 ./configure --prefix="${php_install_dir}" \
