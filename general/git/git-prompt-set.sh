@@ -95,21 +95,31 @@ Dollar="\$"
 # I tweaked it to work on UBUNTU 11.04 & 11.10 plus made it mo' better
 
 export PS1=\
-'['$Username'@'$HostnameShort' '$IYellow$PathShort$Color_Off']\
-$(git branch &>/dev/null; \
+'['${Username}'@'${HostnameShort}' '${IYellow}${PathShort}${Color_Off}']\
+$( \
+    git branch &>/dev/null; \
     if [ $? -eq 0 ]; then \
-        echo "$(
-            echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
+        branch=\($( \
+            git status | grep "nothing to commit" > /dev/null 2>&1; \
             if [ "$?" -eq "0" ]; then \
                 # @4 - Clean repository - nothing to commit
-                echo "'$BIGreen'"$(__git_ps1 "(%s)")"'$Color_Off'"; \
+                echo "'${BIGreen}'$(__git_ps1 "%s")'${Color_Off}'"; \
             else \
                 # @5 - Changes to working tree
-                echo "'$BIRed'"$(__git_ps1 "(%s)")"'$Color_Off'"; \
+                echo "'${BIRed}'$(__git_ps1 "%s")'${Color_Off}'"; \
             fi \
-        )"; \
+        )\) \
+\
+        branch_status=$( \
+            git status --porcelain --branch | head -n1 | cut -d" " -f3- | \
+            sed -re "s/, *|\\\\[|\\\\]//g" | \
+            sed -re "s/ahead ([0-9]+)/'${BIGreen}'>\1'${Color_Off}'/g" | \
+            sed -re "s/behind ([0-9]+)/'${BIRed}'<\1'${Color_Off}'/g" \
+        ); \
+\
+        echo "${branch}${branch_status}"; \
     else \
         # @2 - Prompt when not in GIT repo
         echo ""; \
     fi \
-)'$Dollar' '
+)'${Dollar}' '
