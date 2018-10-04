@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-ST_DATA_DIR=~/.config/sublime-text-3
+SM_DATA_DIR=~/.config/sublime-merge
 
-pushd "${ST_DATA_DIR}" || exit
+pushd "${SM_DATA_DIR}" || exit
 
 if [ ! -d .git ]; then
     git init
-    git remote add origin git@github.com:jfcherng/my-Sublime-Text-settings.git
+    git remote add origin git@github.com:jfcherng/my-Sublime-Merge-settings.git
     git branch -u origin/master
 fi
 
