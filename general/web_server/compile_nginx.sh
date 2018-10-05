@@ -7,7 +7,7 @@
 #------------------------------------------#
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-THREAD_CNT=$(nproc --all)
+THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 NGINX_FLAGS=()
 
 declare -A NGINX_CMD=(
