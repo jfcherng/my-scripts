@@ -9,11 +9,18 @@ case "$(uname -s)" in
         ST_EXECUTABLE_FALLBACK="/opt/sublime_text/sublime_text"
 
         # try to find system sublime_text executable
-        ST_EXECUTABLE_SYSTEM=\
-            cat "$(which subl)" | \
-            command grep -m 1 "^exec" | \
+        ST_EXECUTABLE_SYSTEM="$( \
+            # get the "exec SUBLIME_EXECUTABLE $@" line
+            command grep -o -m 1 -E "(^| )exec .*$" "$(command -v subl)" | \
+            # remove leading spaces
+            awk '{$1=$1}1' | \
+            # remove exec
             cut -d" " -f2- | \
-            awk -F '"' '{print $1}'
+            # get the maybe-quoted executable path
+            sed -re 's/("[^"]*"|[^ ]+).*/\1/g' | \
+            # remove quotes if any
+            sed -re 's/"//g'
+        )"
         ;;
 
     # Windows
