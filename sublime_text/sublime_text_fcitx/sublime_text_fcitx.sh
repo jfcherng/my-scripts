@@ -15,6 +15,12 @@ else
     ST_EXECUTABLE=${ST_EXECUTABLE_FALLBACK}
 fi
 
+if [ "$(getconf LONG_BIT)" -eq "32" ];then
+    OS_BIT=32
+else
+    OS_BIT=64
+fi
+
 ST_HOME="$(dirname "${ST_EXECUTABLE}")"
 
 # install input method
@@ -25,7 +31,7 @@ sudo apt update
 sudo apt install -y build-essential libgtk2.0-dev
 
 # compile source codes
-gcc -Os -shared -o "libsublime-imfix.so" "sublime_imfix.c" $(pkg-config --libs --cflags gtk+-2.0) -fPIC
+gcc -m"${OS_BIT}" -Os -shared -o "libsublime-imfix.so" "sublime_imfix.c" $(pkg-config --libs --cflags gtk+-2.0) -fPIC
 
 # install patches
 sudo mv -f "libsublime-imfix.so" "${ST_HOME}"
