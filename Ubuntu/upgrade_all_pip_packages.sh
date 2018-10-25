@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-pip3 freeze --local | command grep -v '^\-e' | cut -d = -f 1 | xargs -n1 sudo -H pip3 install -U
+[[ "${UID}" == "0" ]] || { echo "run as sudo to execute"; exit 1; }
+
+pip3 freeze --local | command grep -v '^\-e' | cut -d = -f 1 | xargs -n1 -H pip3 install -U
