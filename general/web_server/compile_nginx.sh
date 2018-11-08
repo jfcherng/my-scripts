@@ -12,6 +12,7 @@ NGINX_FLAGS=()
 
 declare -A NGINX_CMD=(
     ["nginx"]="git clone https://github.com/nginx/nginx.git"
+    ["ngx_brotli"]="git clone https://github.com/google/ngx_brotli.git ngx_brotli"
     ["ngx_headers_more"]="git clone https://github.com/openresty/headers-more-nginx-module.git ngx_headers_more"
     ["ngx_http_concat"]="git clone https://github.com/alibaba/nginx-http-concat.git ngx_http_concat"
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
@@ -92,6 +93,7 @@ pushd nginx || exit
 --with-http_stub_status_module \
 --with-http_v2_module \
 --with-openssl="${SCRIPT_DIR}/openssl" \
+--add-module="${SCRIPT_DIR}/ngx_brotli" \
 --add-module="${SCRIPT_DIR}/ngx_headers_more" \
 --add-module="${SCRIPT_DIR}/ngx_http_concat" \
 --add-module="${SCRIPT_DIR}/ngx_http_trim" \
