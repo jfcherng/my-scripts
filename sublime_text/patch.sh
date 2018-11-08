@@ -47,7 +47,7 @@ echo "[Sublime Text] Using executable: ${ST_EXECUTABLE}"
 pushd "${SCRIPT_DIR}" || exit
 
 # update remote repo
-git submodule init
+git submodule update --init
 git submodule update --recursive --remote
 
 # do patching

@@ -14,7 +14,7 @@ pushd ctags || exit
 
 # sync repo
 git fetch --all -p && git checkout origin/master && git reset --hard "@{upstream}"
-git submodule init
+git submodule update --init
 git submodule update --recursive --remote
 
 # build

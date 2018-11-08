@@ -13,7 +13,7 @@ pushd cquery || exit
 
 # sycn repo
 git fetch --all -p && git checkout origin/master && git reset --hard "@{upstream}"
-git submodule init
+git submodule update --init
 git submodule update --recursive --remote
 
 rm -rf build/CMakeFiles/ build/third_party/

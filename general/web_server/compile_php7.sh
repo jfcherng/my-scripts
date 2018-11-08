@@ -35,16 +35,16 @@ for repoName in "${!PHP_CMD[@]}"; do
     if [ ! -d "${repoName}/.git" ]; then
         rm -rf "${repoName}"
         eval "${PHP_CMD[$repoName]}" || exit
-    # update existing repos
-    else
-        pushd "${repoName}" || exit
-
-        # fetch the latest source
-        git submodule foreach --recursive git pull
-        git fetch && git reset --hard "@{upstream}"
-
-        popd || exit
     fi
+
+    pushd "${repoName}" || exit
+
+    # fetch the latest source
+    git fetch --all -p && git reset --hard "@{upstream}"
+    git submodule update --init
+    git submodule foreach --recursive git pull
+
+    popd || exit
 done
 
 
