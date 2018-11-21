@@ -40,7 +40,7 @@ for repoName in "${!PHP_CMD[@]}"; do
     pushd "${repoName}" || exit
 
     # fetch the latest source
-    git fetch --tags --force --all -p && git reset --hard "@{upstream}"
+    git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
     git submodule update --init
     git submodule foreach --recursive git pull
 
@@ -236,7 +236,7 @@ fi
 pushd "php-src" || exit
 
 git checkout "${php_branch}"
-git fetch --tags --force --all -p && git reset --hard "@{upstream}"
+git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
 git submodule init
 git submodule foreach --recursive git pull
 
