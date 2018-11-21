@@ -11,7 +11,7 @@
 	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset %G?%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
 	rb = rebase --autostash --stat
 	rs = reset
-	ft = fetch --tags
+	ft = fetch --tags --force --prune
 	a = add
 	d = diff --patch-with-stat
 	dt = difftool
