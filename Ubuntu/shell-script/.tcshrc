@@ -41,5 +41,3 @@ alias ll 'ls -alFh --color=auto'
 alias l 'll'
 alias ssh 'ssh -c arcfour,blowfish-cbc -XC'
 alias g 'git'
-alias gsync 'git fetch && git reset --hard origin/`git rev-parse --abbrev-ref HEAD`'
-

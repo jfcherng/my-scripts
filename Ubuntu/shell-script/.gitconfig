@@ -5,13 +5,13 @@
 	ui = true
 [alias]
 	co = checkout
-	ci = commit
+	ci = commit -s
 	st = status --show-stash
 	br = branch -vv
-	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
-	rb = rebase
+	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset %G?%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
+	rb = rebase --autostash --stat
 	rs = reset
-	ft = fetch
+	ft = fetch --tags
 	a = add
 	d = diff --patch-with-stat
 	dt = difftool
@@ -21,11 +21,14 @@
 	cl = clean
 	chp = cherry-pick
 	fp = format-patch
-	sync = ! git fetch && git reset --hard @{upstream}
+	sync = ! git fetch --tags --all -p && git reset --hard @{upstream}
 	sh = show --patch-with-stat
 	contributors = shortlog --summary --numbered
 	grp = grep -n --color -E
 	pushf = push --force-with-lease
+	shrink = ! git reflog expire --expire=now --all && git gc --aggressive --prune=now
+	wt = worktree
+	sm = submodule
 [core]
 	autocrlf = false
 	editor = vim
