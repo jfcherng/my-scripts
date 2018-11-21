@@ -40,7 +40,7 @@ for repoName in "${!PHP_CMD[@]}"; do
     pushd "${repoName}" || exit
 
     # fetch the latest source
-    git fetch --all -p && git reset --hard "@{upstream}"
+    git fetch --tags --force --all -p && git reset --hard "@{upstream}"
     git submodule update --init
     git submodule foreach --recursive git pull
 
@@ -61,7 +61,7 @@ fi
 
 pushd "php-src" || exit
 
-git fetch origin
+git fetch --tags --force origin
 git rev-parse --verify "origin/${php_branch}"
 if [ $? -ne 0 ]; then
     echo "[*] PHP branch '${php_branch}' dose not exist."
@@ -236,7 +236,7 @@ fi
 pushd "php-src" || exit
 
 git checkout "${php_branch}"
-git fetch --all -p && git reset --hard "@{upstream}"
+git fetch --tags --force --all -p && git reset --hard "@{upstream}"
 git submodule init
 git submodule foreach --recursive git pull
 

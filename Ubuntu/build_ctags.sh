@@ -13,7 +13,7 @@ fi
 pushd ctags || exit
 
 # sync repo
-git fetch --all -p && git checkout origin/master && git reset --hard "@{upstream}"
+git fetch --tags --force --all -p && git checkout origin/master && git reset --hard "@{upstream}"
 git submodule update --init
 git submodule update --recursive --remote
 

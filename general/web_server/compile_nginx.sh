@@ -40,7 +40,7 @@ for repoName in "${!NGINX_CMD[@]}"; do
     pushd "${repoName}" || exit
 
     # fetch the latest source
-    git fetch --all -p && git reset --hard "@{upstream}"
+    git fetch --tags --force --all -p && git reset --hard "@{upstream}"
     git submodule update --init
     git submodule foreach --recursive git pull
 

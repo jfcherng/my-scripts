@@ -10,7 +10,7 @@ if [ ! -d .git ]; then
     git branch -u origin/master
 fi
 
-git fetch --all -p
+git fetch --tags --force --all -p
 git reset --hard @{upstream}
 
 popd || exit

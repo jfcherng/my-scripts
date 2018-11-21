@@ -21,7 +21,7 @@
 	cl = clean
 	chp = cherry-pick
 	fp = format-patch
-	sync = ! git fetch --tags --all -p && git reset --hard @{upstream}
+	sync = ! git fetch --tags --force --all -p && git reset --hard @{upstream}
 	sh = show --patch-with-stat
 	contributors = shortlog --summary --numbered
 	grp = grep -n --color -E
