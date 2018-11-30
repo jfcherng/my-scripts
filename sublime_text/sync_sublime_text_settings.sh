@@ -7,6 +7,7 @@ pushd "${ST_DATA_DIR}" || exit
 if [ ! -d .git ]; then
     git init
     git remote add origin git@github.com:jfcherng/my-Sublime-Text-settings.git
+    git pull origin master
     git branch -u origin/master
 fi
 
