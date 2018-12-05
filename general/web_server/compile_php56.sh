@@ -16,9 +16,14 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 #----------------#
 
 bison_version="2.7.1"
-php_src_dir="php-5.6.38"
-php_run_user=www
-php_install_dir=/usr/local/php56
+php_version="5.6.39"
+
+# such as "5.6.39" => "56"
+php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
+
+php_run_user="www"
+php_install_dir="/usr/local/php${php_version_path}"
+php_src_dir="php-${php_version}"
 
 
 #----------------------#
@@ -72,7 +77,13 @@ if [ ! -f "${bison_bin_dir}/bison" ]; then
     # remove possibly corrupted old tarball
     rm -f "${bison_tarball}"
 
-    wget "https://ftp.gnu.org/gnu/bison/${bison_tarball}"
+    wget --no-check-certificate "https://ftp.gnu.org/gnu/bison/${bison_tarball}"
+
+    if [ ! -s "${bison_tarball}" ]; then
+        echo "Failed to download bison tarball from GitHub..."
+        exit 1
+    fi
+
     tar xf "${bison_tarball}"
 
     pushd "bison-${bison_version}" || exit
@@ -94,6 +105,20 @@ fi
 #-------------#
 # compile PHP #
 #-------------#
+
+if [ ! -f "${php_src_dir}/buildconf" ]; then
+    php_tarball="php-${php_version}.tar.gz"
+    wget --no-check-certificate "https://github.com/php/php-src/archive/${php_tarball}"
+
+    if [ ! -s "${php_tarball}" ]; then
+        echo "Failed to download PHP tarball from GitHub..."
+        exit 1
+    fi
+
+    tar xf "${php_tarball}"
+    mv "php-src-${php_src_dir}" "${php_src_dir}"
+fi
+
 
 LOW_MEMORY_FLAGS=()
 
