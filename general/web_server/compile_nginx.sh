@@ -10,6 +10,13 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 NGINX_FLAGS=()
 
+
+#--------#
+# config #
+#--------#
+
+OPENSSL_VERSION="1.1.1a"
+
 declare -A NGINX_CMD=(
     ["nginx"]="git clone https://github.com/nginx/nginx.git"
     ["ngx_brotli"]="git clone https://github.com/google/ngx_brotli.git ngx_brotli"
@@ -52,12 +59,18 @@ done
 # check openssl #
 #---------------#
 
-if [ ! -d "openssl" ]; then
-    echo
-    echo Directory "openssl" not found...
-    echo Please download it manually from "https://www.openssl.org/source/"
-    echo Unzip it and rename/link the directory to "openssl" here.
-    exit
+openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
+openssl_src_dir="openssl-${OPENSSL_VERSION}"
+if [ ! -d "${openssl_src_dir}" ]; then
+    rm -f "${openssl_tarball}"
+    wget --no-check-certificate "https://www.openssl.org/source/${openssl_tarball}"
+
+    if [ ! -s "${openssl_tarball}" ]; then
+        echo "Failed to download OpenSSL tarball..."
+        exit 1
+    fi
+
+    tar xf "${openssl_tarball}"
 fi
 
 
@@ -91,7 +104,7 @@ pushd nginx || exit
 --with-http_ssl_module \
 --with-http_stub_status_module \
 --with-http_v2_module \
---with-openssl="${SCRIPT_DIR}/openssl" \
+--with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
 --add-module="${SCRIPT_DIR}/ngx_brotli" \
 --add-module="${SCRIPT_DIR}/ngx_headers_more" \
 --add-module="${SCRIPT_DIR}/ngx_http_concat" \
