@@ -52,7 +52,7 @@ done
 # read option: php_branch #
 #-------------------------#
 
-read -erp "PHP version or branch name to be compiled (such as '7.2' or 'master'): " php_branch
+read -erp "PHP branch to be compiled (such as '7.2', '7.3.0' or even 'master'): " php_branch
 
 # if php_branch is a version number, prepend "PHP-" to it
 if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
@@ -68,11 +68,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# such as "7.2.2"
+# such as "7.3.0"
 php_version=$(git show "origin/${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-# such as "7.2.2" => "72"
+# such as "7.3.0" => "73"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
-# such as "72" => "/usr/local/php72"
+# such as "73" => "/usr/local/php73"
 php_install_dir_default="/usr/local/php${php_version_path}"
 
 popd || exit
