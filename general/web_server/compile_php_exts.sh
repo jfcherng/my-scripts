@@ -92,7 +92,7 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
 
     # fetch the latest source
     git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
-    git submodule init
+    git submodule update --init
     git submodule foreach --recursive git pull
 
     for PHP_BASE_DIR in "${PHP_BASE_DIRS[@]}"; do

@@ -237,7 +237,7 @@ pushd "php-src" || exit
 
 git checkout "${php_branch}"
 git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
-git submodule init
+git submodule update --init
 git submodule foreach --recursive git pull
 
 # use the git commit hash to replace the "-dev" in the PHP version tag
