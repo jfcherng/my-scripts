@@ -33,7 +33,6 @@ declare -A PHP_EXTS_CMD=(
     ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
-    ["yp"]="git clone https://github.com/php/pecl-networking-yp.git yp"
 )
 
 declare -A PHP_EXTS_CONFIG=(
