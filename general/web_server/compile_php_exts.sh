@@ -25,6 +25,7 @@ declare -A PHP_EXTS_CMD=(
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git"
+    ["jsond"]="git clone https://github.com/bukka/php-jsond.git jsond"
     ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
@@ -33,6 +34,10 @@ declare -A PHP_EXTS_CMD=(
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
     ["yp"]="git clone https://github.com/php/pecl-networking-yp.git yp"
+)
+
+declare -A PHP_EXTS_CONFIG=(
+    ["jsond"]="--enable-jsond-prefixing"
 )
 
 
@@ -99,10 +104,11 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
         # paths
         phpize="${PHP_BASE_DIR}/bin/phpize"
         php_config="${PHP_BASE_DIR}/bin/php-config"
+        config_options=${PHP_EXTS_CONFIG[${PHP_EXT_NAME}]}
 
         # compile
         "${phpize}"
-        ./configure --with-php-config="${php_config}"
+        ./configure --with-php-config="${php_config}" ${config_options}
         make -j "${THREAD_CNT}" && make install
 
         # clean up
