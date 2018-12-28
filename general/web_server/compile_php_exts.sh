@@ -15,16 +15,16 @@ PHP_BASE_DIRS=(
     "/usr/local/php72"
     "/usr/local/php73"
     "/usr/local/php74"
-    "/usr/local/php-jit"
+    "/usr/local/php80"
 )
 
 declare -A PHP_EXTS_CMD=(
-    ["apcu"]="git clone https://github.com/krakjoe/apcu.git"
+    ["apcu"]="git clone https://github.com/krakjoe/apcu.git apcu"
     ["ast"]="git clone https://github.com/nikic/php-ast.git ast"
     ["ds"]="git clone https://github.com/php-ds/extension.git ds"
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
-    ["igbinary"]="git clone https://github.com/igbinary/igbinary.git"
+    ["igbinary"]="git clone https://github.com/igbinary/igbinary.git igbinary"
     ["jsond"]="git clone https://github.com/bukka/php-jsond.git jsond"
     ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
