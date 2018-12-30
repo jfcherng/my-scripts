@@ -192,6 +192,7 @@ if command -v yum >/dev/null 2>&1; then
         freetype-devel \
         gmp-devel \
         icu libicu libicu-devel \
+        libsodium libsodium-devel \
         libjpeg-devel libpng-devel libwebp-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
@@ -204,7 +205,8 @@ elif command -v apt >/dev/null 2>&1; then
     apt install -y \
         bzip2 bzip2-dev \
         libgmp-dev \
-        libxml2 libxml2-dev
+        libxml2 libxml2-dev \
+        libsodium23 libsodium-dev
 else
     echo "Could not find 'yum' or 'apt'..."
 fi

@@ -30,6 +30,7 @@ declare -A PHP_EXTS_CMD=(
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
+    ["sodium"]="git clone https://github.com/jedisct1/libsodium-php.git sodium"
     ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
@@ -69,6 +70,28 @@ for IDX in "${!PHP_BASE_DIRS[@]}"; do
         fi
     done
 done
+
+
+#----------------------#
+# install dependencies #
+#----------------------#
+
+echo "==================================="
+echo "Begin install 'PHP' dependencies..."
+echo "==================================="
+
+# yum
+if command -v yum >/dev/null 2>&1; then
+    yum install -y \
+        libsodium libsodium-devel
+# apt
+elif command -v apt >/dev/null 2>&1; then
+    apt update
+    apt install -y \
+        libsodium23 libsodium-dev
+else
+    echo "Could not find 'yum' or 'apt'..."
+fi
 
 
 #------------------------#
