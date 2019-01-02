@@ -29,6 +29,7 @@ declare -A PHP_EXTS_CMD=(
     ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
+    ["mysql"]="git clone https://github.com/php/pecl-database-mysql.git --recursive mysql"
     ["redis"]="git clone https://github.com/phpredis/phpredis.git redis"
     ["sodium"]="git clone https://github.com/jedisct1/libsodium-php.git sodium"
     ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
