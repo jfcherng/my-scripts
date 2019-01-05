@@ -25,6 +25,7 @@ declare -A PHP_EXTS_CMD=(
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git igbinary"
+    ["imagick"]="git clone https://github.com/mkoppanen/imagick.git imagick"
     ["jsond"]="git clone https://github.com/bukka/php-jsond.git jsond"
     ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
@@ -84,7 +85,8 @@ echo "==================================="
 # yum
 if command -v yum >/dev/null 2>&1; then
     yum install -y \
-        libsodium libsodium-devel
+        libsodium libsodium-devel \
+        ImageMagick ImageMagick-devel ImageMagick-perl
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
