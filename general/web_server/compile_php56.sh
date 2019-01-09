@@ -16,7 +16,7 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 #----------------#
 
 bison_version="2.7.1"
-php_version="5.6.39"
+php_version="5.6.40"
 
 # such as "5.6.39" => "56"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
