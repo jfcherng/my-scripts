@@ -106,19 +106,21 @@ fi
 # compile PHP #
 #-------------#
 
-if [ ! -f "${php_src_dir}/buildconf" ]; then
-    php_tarball="php-${php_version}.tar.gz"
+php_tarball="php-${php_version}.tar.gz"
+
+if [ ! -f "${php_tarball}" ]; then
     wget --no-check-certificate "https://github.com/php/php-src/archive/${php_tarball}"
-
-    if [ ! -s "${php_tarball}" ]; then
-        echo "Failed to download PHP tarball from GitHub..."
-        exit 1
-    fi
-
-    tar xf "${php_tarball}"
-    mv "php-src-${php_src_dir}" "${php_src_dir}"
 fi
 
+gzip -t "${php_tarball}"
+if [ $? -ne 0 ]; then
+    echo "${php_tarball} is unusable... Please try this script again."
+    rm -f "${php_tarball}"
+    exit 1
+fi
+
+tar xf "${php_tarball}"
+mv "php-src-${php_src_dir}" "${php_src_dir}"
 
 LOW_MEMORY_FLAGS=()
 
