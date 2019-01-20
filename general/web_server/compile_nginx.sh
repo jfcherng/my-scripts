@@ -123,10 +123,10 @@ make install PREFIX="${luajit2_install_dir}" || exit
 
 ldconfig
 
-NGINX_FLAGS+=( "--with-ld-opt='-Wl,-rpath,${LUAJIT_LIB}'" )
-
 export LUAJIT_LIB="${luajit2_install_dir}/lib"
 export LUAJIT_INC="${luajit2_install_dir}/include/luajit-2.1"
+
+NGINX_FLAGS+=( "--with-ld-opt='-Wl,-rpath,${LUAJIT_LIB}'" )
 
 popd || exit
 
