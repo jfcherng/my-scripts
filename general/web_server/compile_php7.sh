@@ -288,6 +288,9 @@ sed -i"" -E "s/-dev/-dev.$(git rev-parse --short HEAD)/g" ./configure.ac
 --with-zlib \
 ${LOW_MEMORY_FLAGS[*]}
 
+# PEAR is no longer maintained, ignore errors about PEAR
+sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
+
 make -j "${thread_count}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" || exit
 make install || exit
 
