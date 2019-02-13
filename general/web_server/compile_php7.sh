@@ -197,7 +197,7 @@ if command -v yum >/dev/null 2>&1; then
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
         ncurses ncurses-devel \
-        pcre-devel \
+        pcre-devel oniguruma-devel \
         readline-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
@@ -205,6 +205,7 @@ elif command -v apt >/dev/null 2>&1; then
     apt install -y \
         bzip2 bzip2-dev \
         libgmp-dev \
+        libonig libonig-dev \
         libxml2 libxml2-dev \
         libsodium23 libsodium-dev
 else
