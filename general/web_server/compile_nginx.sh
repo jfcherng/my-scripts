@@ -15,6 +15,7 @@ NGINX_FLAGS=()
 # config #
 #--------#
 
+NGINX_INSTALL_DIR="/usr/local/nginx"
 LUAJIT2_VERSION="2.1-20190221"
 OPENSSL_VERSION="1.1.1a"
 
@@ -186,5 +187,7 @@ echo "==================================="
 #-----#
 # end #
 #-----#
+
+"${NGINX_INSTALL_DIR}/sbin/nginx" -V
 
 popd || exit
