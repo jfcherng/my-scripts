@@ -52,24 +52,37 @@ done
 # read option: php_branch #
 #-------------------------#
 
-read -erp "PHP branch to be compiled (such as '7.2', '7.3.0' or even 'master'): " php_branch
-
-# if php_branch is a version number, prepend "PHP-" to it
-if [[ "${php_branch}" =~ ^[0-9]+([.][0-9]+)*$ ]]; then
-    php_branch="PHP-${php_branch}"
-fi
+read -erp "PHP branch to be compiled (such as '7.2', '7.3.2', 'origin/master', etc): " php_branch
 
 pushd "php-src" || exit
 
-git fetch --tags --force origin
-git rev-parse --verify "origin/${php_branch}"
-if [ $? -ne 0 ]; then
-    echo "[*] PHP branch '${php_branch}' dose not exist."
+git fetch --tags --force --prune --all
+
+# some branches to be tried
+php_test_branches=(
+    "origin/${php_branch}"
+    "origin/PHP-${php_branch}"
+    "${php_branch}"
+)
+
+php_full_branch=""
+for php_test_branch in "${php_test_branches[@]}"; do
+    git rev-parse --verify "${php_test_branch}"
+    if [ $? -eq 0 ]; then
+        php_full_branch="${php_test_branch}"
+        break
+    fi
+done
+
+if [ "${php_full_branch}" = "" ]; then
+    echo "[*] Cannot found related PHP branch: ${php_branch}"
     exit 1
 fi
 
+echo "[*] Use PHP branch: ${php_full_branch}"
+
 # such as "7.3.0"
-php_version=$(git show "origin/${php_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+php_version=$(git show "${php_full_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 # such as "7.3.0" => "73"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
 # such as "73" => "/usr/local/php73"
@@ -135,7 +148,7 @@ echo
 echo "==================================="
 echo "compile_libzip  = ${compile_libzip}"
 echo "thread_count    = ${thread_count}"
-echo "php_branch      = ${php_branch}"
+echo "php_full_branch = ${php_full_branch}"
 echo "php_install_dir = ${php_install_dir}"
 echo "php_run_user    = ${php_run_user}"
 echo "==================================="
@@ -238,8 +251,8 @@ fi
 
 pushd "php-src" || exit
 
-git checkout "${php_branch}"
-git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
+git checkout -f "${php_full_branch}"
+git reset --hard "@{upstream}"
 git submodule update --init
 git submodule foreach --recursive git pull
 
@@ -309,5 +322,7 @@ echo "==================================="
 #-----#
 # end #
 #-----#
+
+"${php_install_dir}/bin/php" -v
 
 popd || exit
