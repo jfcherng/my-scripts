@@ -251,6 +251,8 @@ fi
 
 pushd "php-src" || exit
 
+git clean -dfx
+git checkout -- .
 git checkout -f "${php_full_branch}"
 git reset --hard "@{upstream}"
 git submodule update --init
