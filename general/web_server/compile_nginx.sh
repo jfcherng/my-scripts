@@ -17,7 +17,7 @@ NGINX_FLAGS=()
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
 LUAJIT2_VERSION="2.1-20190302"
-OPENSSL_VERSION="1.1.1a"
+OPENSSL_VERSION="1.1.1b"
 
 declare -A NGINX_CMD=(
     ["nginx"]="git clone https://github.com/nginx/nginx.git"
