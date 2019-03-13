@@ -146,6 +146,10 @@ echo "==================================="
 
 pushd nginx || exit
 
+# keep in a fresh state
+git clean -dfx
+git checkout -- .
+
 ./auto/configure \
     --prefix=/usr/local/nginx \
     --user=www \
