@@ -106,7 +106,7 @@ fi
 # compile PHP #
 #-------------#
 
-php_tarball="php-${php_version}.tar.gz"
+php_tarball="${php_src_dir}.tar.gz"
 
 if [ ! -f "${php_tarball}" ]; then
     wget --no-check-certificate "https://github.com/php/php-src/archive/${php_tarball}"
@@ -119,6 +119,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# always compile from a fresh state
+rm -rf "${php_src_dir}"
 tar xf "${php_tarball}"
 mv "php-src-${php_src_dir}" "${php_src_dir}"
 
