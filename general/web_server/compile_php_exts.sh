@@ -21,6 +21,7 @@ PHP_BASE_DIRS=(
 declare -A PHP_EXTS_CMD=(
     ["apcu"]="git clone https://github.com/krakjoe/apcu.git apcu"
     ["ast"]="git clone https://github.com/nikic/php-ast.git ast"
+    ["decimal"]="git clone https://github.com/php-decimal/ext-decimal.git decimal"
     ["ds"]="git clone https://github.com/php-ds/extension.git ds"
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
@@ -86,12 +87,14 @@ echo "==================================="
 # yum
 if command -v yum >/dev/null 2>&1; then
     yum install -y \
+        mpdecimal mpdecimal-devel \
         libsodium libsodium-devel \
         ImageMagick ImageMagick-devel ImageMagick-perl
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
     apt install -y \
+        libmpdec libmpdec-dev \
         libsodium23 libsodium-dev
 else
     echo "Could not find 'yum' or 'apt'..."
