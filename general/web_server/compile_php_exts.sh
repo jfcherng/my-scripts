@@ -37,7 +37,13 @@ declare -A PHP_EXTS_CMD=(
     ["ssh2"]="git clone https://github.com/php/pecl-networking-ssh2.git ssh2"
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["swoole-async-ext"]="git clone https://github.com/swoole/async-ext.git swoole-async-ext"
-    ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git --single-branch --branch develop xxhash"
+    ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git xxhash"
+)
+
+# checkout repo to a specific commit before compilation
+declare -A PHP_EXTS_CHECKOUT=(
+    ["swoole"]="v4.3.1"
+    ["xxhash"]="origin/develop"
 )
 
 declare -A PHP_EXTS_CONFIG=(
@@ -128,6 +134,12 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
     git submodule update --init
     git submodule foreach --recursive git pull
+
+    # checkout a specific commit
+    commit=${PHP_EXTS_CHECKOUT[${PHP_EXT_NAME}]}
+    if [ "${commit}" != "" ]; then
+        git checkout -f "${commit}"
+    fi
 
     for PHP_BASE_DIR in "${PHP_BASE_DIRS[@]}"; do
         # paths
