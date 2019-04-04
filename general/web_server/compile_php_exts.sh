@@ -18,6 +18,7 @@ PHP_BASE_DIRS=(
     "/usr/local/php80"
 )
 
+# the command used to clone a repo
 declare -A PHP_EXTS_CMD=(
     ["apcu"]="git clone https://github.com/krakjoe/apcu.git apcu"
     ["ast"]="git clone https://github.com/nikic/php-ast.git ast"
@@ -46,6 +47,7 @@ declare -A PHP_EXTS_CHECKOUT=(
     ["xxhash"]="origin/develop"
 )
 
+# extra flags appended to php-config
 declare -A PHP_EXTS_CONFIG=(
     ["jsond"]="--enable-jsond-prefixing"
 )
@@ -65,13 +67,13 @@ pushd "${SCRIPT_DIR}" || exit
 for IDX in "${!PHP_BASE_DIRS[@]}"; do
     PHP_BASE_DIR=${PHP_BASE_DIRS[$IDX]}
 
-    # necessary files
+    # required files
     declare -A files=(
         ["phpize"]="${PHP_BASE_DIR}/bin/phpize"
         ["php_config"]="${PHP_BASE_DIR}/bin/php-config"
     )
 
-    # eleminate PHP base directory if necessary files not found
+    # eleminate PHP base directory if required files not found
     for file in "${files[@]}"; do
         if [ ! -f "${file}" ]; then
             echo "[*] Skip '${PHP_BASE_DIR}' because '${file}' is not a file..."
