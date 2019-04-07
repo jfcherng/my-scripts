@@ -15,8 +15,8 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 # configurations #
 #----------------#
 
-bison_version="2.7.1"
 php_version="latest"
+bison_version="2.7.1"
 
 # get the exact latest 5.6 version number
 if [ "${php_version,,}" = 'latest' ]; then
@@ -69,8 +69,8 @@ yum install -y \
 # fix lib linking #
 #-----------------#
 
-ln -sf /usr/lib64/libldap* /usr/lib/
-ln -sf /usr/lib64/liblber* /usr/lib/
+ln -sfn /usr/lib64/libldap* /usr/lib/
+ln -sfn /usr/lib64/liblber* /usr/lib/
 
 ldconfig
 
@@ -113,7 +113,7 @@ fi
 
 # prefer using older bison
 if ! bison --version | grep -F -q "${bison_version}"; then
-    echo "* temporarily set bison executable into PATH"
+    echo "[*] temporarily set bison executable into PATH"
     PATH="${bison_bin_dir}:$PATH"
 fi
 
@@ -163,51 +163,54 @@ pushd "${php_src_dir}" || exit
 
 ./buildconf --force
 
-./configure --prefix="${php_install_dir}" \
---disable-debug \
---disable-rpath \
---enable-bcmath \
---enable-calendar \
---enable-exif \
---enable-fpm \
---enable-ftp \
---enable-inline-optimization \
---enable-intl \
---enable-mbregex --enable-mbstring \
---enable-pcntl \
---enable-shmop \
---enable-soap \
---enable-sockets \
---enable-sysvmsg --enable-sysvsem --enable-sysvshm \
---enable-wddx \
---enable-xml \
---enable-zip \
---with-bz2 \
---with-config-file-path="${php_install_dir}/etc" \
---with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
---with-curl="/usr/local" \
---with-fpm-group="${php_run_user}" \
---with-fpm-user="${php_run_user}" \
---with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf \
---with-gettext \
---with-gmp \
---with-iconv-dir="/usr/local" \
---with-libxml-dir="/usr" \
---with-libzip \
---with-mhash \
---with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
---with-openssl \
---with-pspell \
---with-readline \
---with-xmlrpc \
---with-xsl \
---with-zlib \
-${LOW_MEMORY_FLAGS[*]}
+./configure \
+    --prefix="${php_install_dir}" \
+    --disable-debug \
+    --disable-rpath \
+    --enable-bcmath \
+    --enable-calendar \
+    --enable-exif \
+    --enable-fpm \
+    --enable-ftp \
+    --enable-inline-optimization \
+    --enable-intl \
+    --enable-mbregex --enable-mbstring \
+    --enable-pcntl \
+    --enable-shmop \
+    --enable-soap \
+    --enable-sockets \
+    --enable-sysvmsg --enable-sysvsem --enable-sysvshm \
+    --enable-wddx \
+    --enable-xml \
+    --enable-zip \
+    --with-bz2 \
+    --with-config-file-path="${php_install_dir}/etc" \
+    --with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
+    --with-curl="/usr/local" \
+    --with-fpm-group="${php_run_user}" \
+    --with-fpm-user="${php_run_user}" \
+    --with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf \
+    --with-gettext \
+    --with-gmp \
+    --with-iconv-dir="/usr/local" \
+    --with-libxml-dir="/usr" \
+    --with-libzip \
+    --with-mhash \
+    --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
+    --with-openssl \
+    --with-pspell \
+    --with-readline \
+    --with-xmlrpc \
+    --with-xsl \
+    --with-zlib \
+    ${LOW_MEMORY_FLAGS[*]}
 
 # PEAR is no longer maintained, ignore errors about PEAR
 sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
 
-make -j"${THREAD_CNT}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" && make install && make clean
+make -j"${THREAD_CNT}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" || exit
+make install || exit
+make clean
 
 popd || exit
 
@@ -215,5 +218,7 @@ popd || exit
 #-----#
 # end #
 #-----#
+
+"${php_install_dir}/bin/php" -v
 
 popd || exit

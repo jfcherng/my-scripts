@@ -263,46 +263,47 @@ sed -i"" -E "s/-dev/-dev.$(git rev-parse --short HEAD)/g" ./configure.ac
 
 ./buildconf --force
 
-./configure --prefix="${php_install_dir}" \
---disable-debug \
---disable-rpath \
---enable-bcmath \
---enable-calendar \
---enable-exif \
---enable-fpm \
---enable-ftp \
---enable-inline-optimization \
---enable-intl \
---enable-mbregex --enable-mbstring \
---enable-pcntl \
---enable-shmop \
---enable-soap \
---enable-sockets \
---enable-sysvmsg --enable-sysvsem --enable-sysvshm \
---enable-wddx \
---enable-xml \
---enable-zip \
---with-bz2 \
---with-config-file-path="${php_install_dir}/etc" \
---with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
---with-curl="/usr/local" \
---with-fpm-group="${php_run_user}" \
---with-fpm-user="${php_run_user}" \
---with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --with-webp-dir --enable-gd-native-ttf \
---with-gettext \
---with-gmp \
---with-iconv-dir="/usr/local" \
---with-libxml-dir="/usr" \
---with-libzip \
---with-mhash \
---with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
---with-openssl \
---with-pspell \
---with-readline \
---with-xmlrpc \
---with-xsl \
---with-zlib \
-${LOW_MEMORY_FLAGS[*]}
+./configure \
+    --prefix="${php_install_dir}" \
+    --disable-debug \
+    --disable-rpath \
+    --enable-bcmath \
+    --enable-calendar \
+    --enable-exif \
+    --enable-fpm \
+    --enable-ftp \
+    --enable-inline-optimization \
+    --enable-intl \
+    --enable-mbregex --enable-mbstring \
+    --enable-pcntl \
+    --enable-shmop \
+    --enable-soap \
+    --enable-sockets \
+    --enable-sysvmsg --enable-sysvsem --enable-sysvshm \
+    --enable-wddx \
+    --enable-xml \
+    --enable-zip \
+    --with-bz2 \
+    --with-config-file-path="${php_install_dir}/etc" \
+    --with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
+    --with-curl="/usr/local" \
+    --with-fpm-group="${php_run_user}" \
+    --with-fpm-user="${php_run_user}" \
+    --with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --with-webp-dir --enable-gd-native-ttf \
+    --with-gettext \
+    --with-gmp \
+    --with-iconv-dir="/usr/local" \
+    --with-libxml-dir="/usr" \
+    --with-libzip \
+    --with-mhash \
+    --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
+    --with-openssl \
+    --with-pspell \
+    --with-readline \
+    --with-xmlrpc \
+    --with-xsl \
+    --with-zlib \
+    ${LOW_MEMORY_FLAGS[*]}
 
 # PEAR is no longer maintained, ignore errors about PEAR
 sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
