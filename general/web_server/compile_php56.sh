@@ -16,7 +16,23 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 #----------------#
 
 bison_version="2.7.1"
-php_version="5.6.40"
+php_version="latest"
+
+# get the exact latest 5.6 version number
+if [ "${php_version,,}" = 'latest' ]; then
+    # get something like "5.6.40"
+    php_version=$( \
+        curl -s -k 'https://api.github.com/repos/php/php-src/git/refs/tags' | \
+        python -m json.tool | \
+        command grep -Pio 'php-5.6.[0-9]+((alpha|beta|rc)[0-9]*)?' | \
+        uniq | \
+        tail -1 | \
+        # remove leading "php-"
+        cut -b 5-
+    )
+
+    echo "[*] The latest PHP 5.6 version is ${php_version}"
+fi
 
 # such as "5.6.39" => "56"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
