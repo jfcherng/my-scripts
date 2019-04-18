@@ -43,7 +43,6 @@ declare -A PHP_EXTS_CMD=(
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
-    ["swoole"]="v4.3.1"
     ["xxhash"]="origin/develop"
 )
 
