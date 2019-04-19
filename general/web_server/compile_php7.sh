@@ -60,8 +60,13 @@ git fetch --tags --force --prune --all
 
 # some branches to be tried
 php_test_branches=(
+    # tags
+    "tags/${php_branch}"
+    "tags/php-${php_branch^^}"
+    # branches
     "origin/${php_branch}"
     "origin/PHP-${php_branch}"
+    # customized
     "${php_branch}"
 )
 
