@@ -216,6 +216,7 @@ if command -v yum >/dev/null 2>&1; then
         libxslt libxslt-devel \
         ncurses ncurses-devel \
         pcre-devel oniguruma-devel \
+        sqlite-devel \
         readline-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
@@ -225,7 +226,8 @@ elif command -v apt >/dev/null 2>&1; then
         libgmp-dev \
         libonig libonig-dev \
         libxml2 libxml2-dev \
-        libsodium23 libsodium-dev
+        libsodium23 libsodium-dev \
+        libsqlite3 libsqlite3-dev
 else
     echo "Could not find 'yum' or 'apt'..."
 fi
