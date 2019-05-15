@@ -69,7 +69,7 @@ done
 luajit2_tarball="luajit2-${LUAJIT2_VERSION}.tar.gz"
 luajit2_src_dir="luajit2-${LUAJIT2_VERSION}"
 if [ ! -d "${luajit2_src_dir}" ]; then
-    rm -f "${luajit2_tarball}"
+    rm -f -- luajit2-* # also remove downloaded old libs
     wget --no-check-certificate "https://github.com/openresty/luajit2/archive/v${LUAJIT2_VERSION}.tar.gz" -O "${luajit2_tarball}"
 
     if [ ! -s "${luajit2_tarball}" ]; then
@@ -88,7 +88,7 @@ fi
 openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
 openssl_src_dir="openssl-${OPENSSL_VERSION}"
 if [ ! -d "${openssl_src_dir}" ]; then
-    rm -f "${openssl_tarball}"
+    rm -f -- openssl-* # also remove downloaded old libs
     wget --no-check-certificate "https://www.openssl.org/source/${openssl_tarball}"
 
     if [ ! -s "${openssl_tarball}" ]; then
