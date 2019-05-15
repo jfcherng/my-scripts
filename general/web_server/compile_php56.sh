@@ -81,6 +81,9 @@ ldconfig
 
 pushd "${SCRIPT_DIR}" || exit
 
+# prefer the latest user-installed libs if possible
+PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+
 
 #-------------------------------#
 # compile old bison for PHP 5.6 #

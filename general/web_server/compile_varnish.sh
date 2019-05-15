@@ -18,6 +18,9 @@ MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 
 pushd "${SCRIPT_DIR}" || exit
 
+# prefer the latest user-installed libs if possible
+PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+
 
 #--------------------------#
 # read option: vsh_version #

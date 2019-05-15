@@ -22,6 +22,9 @@ declare -A PHP_CMD=(
 
 pushd "${SCRIPT_DIR}" || exit
 
+# prefer the latest user-installed libs if possible
+PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+
 
 #-------------#
 # check repos #
