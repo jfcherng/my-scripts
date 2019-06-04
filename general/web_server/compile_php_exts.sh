@@ -48,6 +48,7 @@ declare -A PHP_EXTS_CHECKOUT=(
 
 # extra flags appended to php-config
 declare -A PHP_EXTS_CONFIG=(
+    ["imagick"]="--with-imagick=/usr/local/imagemagick"
     ["jsond"]="--enable-jsond-prefixing"
 )
 
