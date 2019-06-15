@@ -214,7 +214,7 @@ if command -v yum >/dev/null 2>&1; then
         gmp-devel \
         icu libicu libicu-devel \
         libsodium libsodium-devel \
-        libjpeg-devel libpng-devel libwebp-devel \
+        libjpeg-devel libpng-devel libwebp-devel libXpm-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
         ncurses ncurses-devel \
@@ -226,9 +226,12 @@ elif command -v apt >/dev/null 2>&1; then
     apt update
     apt install -y \
         bzip2 bzip2-dev \
+        libfreetype6-dev \
         libgmp-dev \
+        libjpeg-dev libpng-dev libwebp-dev libxpm-dev \
         libonig libonig-dev \
         libxml2 libxml2-dev \
+        libncurses libncurses-dev \
         libsodium23 libsodium-dev \
         libsqlite3 libsqlite3-dev
 else
@@ -273,8 +276,14 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
 
 ./buildconf --force
 
+# there are some mixed --enable/--with switches because some of them are different among versions.
+# for example, gd/zlib switches have been changed since PHP 7.4.
 ./configure \
     --prefix="${php_install_dir}" \
+    --with-config-file-path="${php_install_dir}/etc" \
+    --with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
+    --with-fpm-group="${php_run_user}" \
+    --with-fpm-user="${php_run_user}" \
     --disable-debug \
     --disable-rpath \
     --enable-bcmath \
@@ -294,17 +303,20 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
     --enable-xml \
     --enable-zip \
     --with-bz2 \
-    --with-config-file-path="${php_install_dir}/etc" \
-    --with-config-file-scan-dir="${php_install_dir}/etc/php.d" \
     --with-curl="/usr/local" \
-    --with-fpm-group="${php_run_user}" \
-    --with-fpm-user="${php_run_user}" \
-    --with-gd --with-freetype-dir --with-jpeg-dir --with-png-dir --with-webp-dir --enable-gd-native-ttf \
+    --with-ffi \
+    --with-gd --enable-gd \
+        --enable-gd-native-ttf --enable-gd-jis-conv \
+        --with-freetype-dir --with-freetype \
+        --with-jpeg-dir --with-jpeg \
+        --with-png-dir --with-png \
+        --with-webp-dir --with-webp \
+        --with-xpm-dir --with-xpm \
     --with-gettext \
     --with-gmp \
     --with-iconv-dir="/usr/local" \
     --with-libxml-dir="/usr" \
-    --with-libzip \
+    --with-libzip="/usr/local" \
     --with-mhash \
     --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
     --with-openssl \
@@ -312,7 +324,8 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
     --with-readline \
     --with-xmlrpc \
     --with-xsl \
-    --with-zlib \
+    --with-zip \
+    --with-zlib --with-zlib-dir \
     ${LOW_MEMORY_FLAGS[*]}
 
 # PEAR is no longer maintained, ignore errors about PEAR
