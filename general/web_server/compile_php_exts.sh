@@ -54,6 +54,16 @@ declare -A PHP_EXTS_CONFIG=(
     ["xdebug"]="--enable-xdebug"
 )
 
+function tab_title {
+    if [ -z "$1" ]; then
+        title=${PWD##*/} # current directory
+    else
+        title=$1 # first param
+    fi
+
+    echo -n -e "\033]0;${title}\007"
+}
+
 
 #-------#
 # begin #
@@ -154,6 +164,9 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
         php_config="${PHP_BASE_DIR}/bin/php-config"
         config_options=${PHP_EXTS_CONFIG[${PHP_EXT_NAME}]}
 
+        # set tab title (for tmux)
+        tab_title "${PHP_BASE_DIR}: ${PHP_EXT_NAME}"
+
         # compile
         "${phpize}"
         ./configure --with-php-config="${php_config}" ${config_options}
@@ -168,6 +181,9 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
 
     popd || exit
 
+    # restore tab title
+    tab_title
+
     echo "==================================="
     echo "End compile '${PHP_EXT_NAME}'..."
     echo "==================================="
@@ -179,5 +195,8 @@ popd || exit
 #-----#
 # end #
 #-----#
+
+# restore tab title
+tab_title
 
 popd || exit
