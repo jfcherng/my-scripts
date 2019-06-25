@@ -79,7 +79,7 @@ php_test_revs=(
 
 php_full_rev=""
 for php_test_rev in "${php_test_revs[@]}"; do
-    if ! git rev-parse --verify "${php_test_rev}"; then
+    if git rev-parse --verify "${php_test_rev}" 2>/dev/null ; then
         php_full_rev="${php_test_rev}"
         break
     fi
