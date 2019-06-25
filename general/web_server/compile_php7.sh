@@ -51,46 +51,49 @@ for repoName in "${!PHP_CMD[@]}"; do
 done
 
 
-#-------------------------#
-# read option: php_branch #
-#-------------------------#
+#----------------------#
+# read option: php_rev #
+#----------------------#
 
-read -erp "PHP branch to be compiled (such as '7.2', '7.3.2', 'origin/master', etc): " php_branch
+read -erp "PHP revision to be compiled (such as '7.3.2', '3c3775fc38' or 'origin/master'): " php_rev
 
 pushd "php-src" || exit
 
-git fetch --tags --force --prune --all
-
-# some branches to be tried
-php_test_branches=(
+# some possible revisions to be tried
+php_test_revs=(
     # tags
-    "tags/${php_branch}"
-    "tags/php-${php_branch^^}"
+    "tags/${php_rev}"
+    "tags/php-${php_rev}"
+    "tags/php-${php_rev^^}" # all uppercase, such as "RC"
+    "tags/php-${php_rev,,}" # all lowercase, such as "alpha"
     # branches
-    "origin/${php_branch}"
-    "origin/PHP-${php_branch}"
+    "origin/${php_rev}"
+    "origin/PHP-${php_rev}"
+    "origin/PHP-${php_rev^^}" # all uppercase, such as "RC"
+    "origin/PHP-${php_rev,,}" # all lowercase, such as "alpha"
     # customized
-    "${php_branch}"
+    "${php_rev}"
+    "${php_rev^^}"
+    "${php_rev,,}"
 )
 
-php_full_branch=""
-for php_test_branch in "${php_test_branches[@]}"; do
-    git rev-parse --verify "${php_test_branch}"
-    if [ $? -eq 0 ]; then
-        php_full_branch="${php_test_branch}"
+php_full_rev=""
+for php_test_rev in "${php_test_revs[@]}"; do
+    if ! git rev-parse --verify "${php_test_rev}"; then
+        php_full_rev="${php_test_rev}"
         break
     fi
 done
 
-if [ "${php_full_branch}" = "" ]; then
-    echo "[*] Cannot found related PHP branch: ${php_branch}"
+if [ "${php_full_rev}" = "" ]; then
+    echo "[*] Cannot found related PHP revision: ${php_rev}"
     exit 1
 fi
 
-echo "[*] Use PHP branch: ${php_full_branch}"
+echo "[*] Use PHP revision: ${php_full_rev}"
 
 # such as "7.3.0"
-php_version=$(git show "${php_full_branch}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+php_version=$(git show "${php_full_rev}:./NEWS" | command grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
 # such as "7.3.0" => "73"
 php_version_path=$(echo "${php_version}" | sed -r 's/^([0-9]+)(\.([0-9]+))?.*$/\1\3/g')
 # such as "73" => "/usr/local/php73"
@@ -156,7 +159,7 @@ echo
 echo "==================================="
 echo "compile_libzip  = ${compile_libzip}"
 echo "thread_count    = ${thread_count}"
-echo "php_full_branch = ${php_full_branch}"
+echo "php_full_rev    = ${php_full_rev}"
 echo "php_install_dir = ${php_install_dir}"
 echo "php_run_user    = ${php_run_user}"
 echo "==================================="
@@ -266,7 +269,7 @@ pushd "php-src" || exit
 
 git clean -dfx
 git checkout -- .
-git checkout -f "${php_full_branch}"
+git checkout -f "${php_full_rev}"
 git reset --hard "@{upstream}"
 git submodule update --init
 git submodule foreach --recursive git pull
