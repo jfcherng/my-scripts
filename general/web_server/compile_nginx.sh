@@ -27,6 +27,7 @@ declare -A NGINX_CMD=(
     ["ngx_http_concat"]="git clone https://github.com/alibaba/nginx-http-concat.git ngx_http_concat"
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
     ["ngx_lua"]="git clone https://github.com/openresty/lua-nginx-module.git ngx_lua"
+    ["ngx_njs"]="git clone https://github.com/nginx/njs ngx_njs"
 )
 
 
@@ -170,6 +171,7 @@ git checkout -- .
     --add-module="${SCRIPT_DIR}/ngx_http_concat" \
     --add-module="${SCRIPT_DIR}/ngx_http_trim" \
     --add-module="${SCRIPT_DIR}/ngx_lua" \
+    --add-module="${SCRIPT_DIR}/ngx_njs/nginx" \
     ${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" || exit
