@@ -22,6 +22,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
+OPENSSL_VERSION="1.1.1c"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -36,7 +37,6 @@ declare -A NGINX_CMD=(
     ["ngx_njs"]="git clone https://github.com/nginx/njs.git ngx_njs"
     # deps
     ["luajit2"]="git clone https://github.com/openresty/luajit2.git luajit2"
-    ["openssl"]="git clone https://github.com/openssl/openssl.git openssl"
 )
 
 # checkout repo to a specific commit before compilation
@@ -45,7 +45,6 @@ declare -A NGINX_MODULES_CHECKOUT=(
     ["ngx_njs"]="tags/0.3.3"
     # deps
     ["luajit2"]="tags/v2.1-20190626"
-    ["openssl"]="tags/OpenSSL_1_1_1c"
 )
 
 
@@ -87,6 +86,25 @@ for repoName in "${!NGINX_CMD[@]}"; do
 
     popd || exit
 done
+
+
+#---------------#
+# check openssl #
+#---------------#
+
+openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
+openssl_src_dir="openssl-${OPENSSL_VERSION}"
+if [ ! -d "${openssl_src_dir}" ]; then
+    rm -f -- openssl-* # also remove downloaded old libs
+    wget --no-check-certificate "https://www.openssl.org/source/${openssl_tarball}"
+
+    if [ ! -s "${openssl_tarball}" ]; then
+        echo "Failed to download OpenSSL tarball..."
+        exit 1
+    fi
+
+    tar xf "${openssl_tarball}"
+fi
 
 
 #----------------#
@@ -149,7 +167,7 @@ pushd nginx || exit
     --with-http_ssl_module \
     --with-http_stub_status_module \
     --with-http_v2_module \
-    --with-openssl="${SCRIPT_DIR}/openssl" \
+    --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
     --add-module="${SCRIPT_DIR}/ngx_brotli" \
     --add-module="${SCRIPT_DIR}/ngx_devel_kit" \
     --add-module="${SCRIPT_DIR}/ngx_headers_more" \
