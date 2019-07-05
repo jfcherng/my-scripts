@@ -64,6 +64,12 @@ function tab_title {
     echo -n -e "\033]0;${title}\007"
 }
 
+function git_repo_clean {
+    make clean >/dev/null 2>&1
+    git clean -dfx
+    git checkout -- .
+}
+
 
 #-------#
 # begin #
@@ -147,6 +153,8 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
 
     pushd "${PHP_EXT_NAME}/" || exit
 
+    git_repo_clean
+
     # fetch the latest source
     git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
     git submodule update --init
@@ -171,12 +179,7 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
         "${phpize}"
         ./configure --with-php-config="${php_config}" ${config_options}
         make -j "${THREAD_CNT}" && make install
-
-        # clean up
-        "${phpize}" --clean
-        make clean
-        git clean -dfx
-        git checkout -- .
+        git_repo_clean
     done
 
     popd || exit

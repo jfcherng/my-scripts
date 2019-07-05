@@ -22,7 +22,7 @@ function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4
 #-------------------#
 
 GCC_MIN_VERSION=4.9.0
-if [ $(version $(gcc -dumpversion)) -lt $(version "${GCC_MIN_VERSION}") ]; then
+if [ "$(version "$(gcc -dumpversion)")" -lt "$(version "${GCC_MIN_VERSION}")" ]; then
     echo "[*] GCC must be newer than ${GCC_MIN_VERSION}"
     exit 1
 fi

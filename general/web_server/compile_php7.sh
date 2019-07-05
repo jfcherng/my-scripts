@@ -10,6 +10,12 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 
+function git_repo_clean {
+    make clean >/dev/null 2>&1
+    git clean -dfx
+    git checkout -- .
+}
+
 declare -A PHP_CMD=(
     ["libzip"]="git clone https://github.com/nih-at/libzip.git"
     ["php-src"]="git clone https://github.com/php/php-src.git"
@@ -41,6 +47,8 @@ for repoName in "${!PHP_CMD[@]}"; do
     fi
 
     pushd "${repoName}" || exit
+
+    git_repo_clean
 
     # fetch the latest source
     git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
@@ -267,8 +275,8 @@ fi
 
 pushd "php-src" || exit
 
-git clean -dfx
-git checkout -- .
+git_repo_clean
+
 git checkout -f "${php_full_rev}"
 git reset --hard "@{upstream}"
 git submodule update --init
@@ -336,10 +344,7 @@ sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
 
 make -j "${thread_count}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" || exit
 make install || exit
-
-make clean
-git clean -dfx
-git checkout -- .
+git_repo_clean
 
 popd || exit
 
