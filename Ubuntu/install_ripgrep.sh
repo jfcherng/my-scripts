@@ -17,9 +17,9 @@ TMPDIR=$(mktemp -d)
 pushd "${TMPDIR}" || exit
 
 wget -O - "${REPO}${RELEASE}" | tar zxf - --strip-component=1
-mv rg /usr/local/bin/
-mv rg.1 /usr/local/share/man/man1/
-mv complete/rg.bash-completion /usr/share/bash-completion/completions/rg
+mv -f rg /usr/local/bin/
+mv -f rg.1 /usr/local/share/man/man1/
+mv -f complete/rg.bash-completion /usr/share/bash-completion/completions/rg
 mandb
 
 popd || exit

@@ -1,9 +1,9 @@
 scriptDir=/opt/shell-script
 
 ### my settings
-source "$scriptDir/git-prompt.sh"
-source "$scriptDir/git-prompt-set.sh"
-source "$scriptDir/git-completion.bash"
+. "${scriptDir}/git-prompt.sh"
+. "${scriptDir}/git-prompt-set.sh"
+. "${scriptDir}/git-completion.bash"
 
 export PATH="/opt/sublime_text/bin_linux:$PATH"
 

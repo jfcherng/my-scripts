@@ -35,6 +35,6 @@ gcc -m"${OS_BIT}" -Os -shared -o "libsublime-imfix.so" "sublime_imfix.c" $(pkg-c
 
 # install patches
 sudo mv -f "libsublime-imfix.so" "${ST_HOME}"
-sudo cp -f "subl" "${ST_EXECUTABLE}"
-sudo cp -f "sublime_text.desktop" "/usr/share/applications/"
-sudo cp -f "sublime_text.desktop" "${ST_HOME}"
+sudo command cp -f "subl" "${ST_EXECUTABLE}"
+sudo command cp -f "sublime_text.desktop" "/usr/share/applications/"
+sudo command cp -f "sublime_text.desktop" "${ST_HOME}"

@@ -4,31 +4,35 @@
 [color]
 	ui = true
 [alias]
-	co = checkout
-	ci = commit -s
-	st = status --show-stash
-	br = branch -vv
-	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset %G?%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
-	rb = rebase --autostash --stat
-	rs = reset
-	ft = fetch --tags --force --prune
 	a = add
+	bl = blame
+	br = branch -vv
+	chp = cherry-pick
+	ci = commit -s
+	cl = clean
+	co = checkout
+	contributors = shortlog --summary --numbered
 	d = diff --patch-with-stat
 	dt = difftool
+	fp = format-patch
+	ft = fetch --tags --force --prune
+	grp = grep -n --color -E
+	l = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
+	lg = log --graph --date=short --color --pretty=format:'%C(yellow bold)%h%Creset %G?%C(auto)%d%Creset - %s %C(green bold)[%an]%Creset %C(blue bold)(%ad, %cr)%Creset'
 	m = merge
 	mt = mergetool
-	bl = blame
-	cl = clean
-	chp = cherry-pick
-	fp = format-patch
-	sync = ! git fetch --tags --force --prune --all && git reset --hard @{upstream}
-	sh = show --patch-with-stat
-	contributors = shortlog --summary --numbered
-	grp = grep -n --color -E
+	parent = "! git show-branch | grep '*' | grep -v \"master\" | head -n1 | sed 's/.*\\[\\(.*\\)\\].*/\\1/' | sed 's/[\\^~].*//' #"
+	pl = pull --rebase
+	pull = pull --rebase
 	pushf = push --force-with-lease
+	rb = rebase
+	rs = reset
+	sh = show --patch-with-stat
 	shrink = ! git reflog expire --expire=now --all && git gc --aggressive --prune=now
-	wt = worktree
 	sm = submodule
+	st = status --show-stash
+	sync = ! git fetch --tags --force --prune --all && git reset --hard @{upstream}
+	wt = worktree
 [core]
 	autocrlf = false
 	editor = vim

@@ -8,7 +8,7 @@ umask 002
 alias precmd "source $scriptDir/git-prompt-set.tcsh"
 
 # git completion
-source "$scriptDir/git-completion.tcsh"
+. "$scriptDir/git-completion.tcsh"
 set autolist=ambiguous
 
 setenv LD_LIBRARY_PATH

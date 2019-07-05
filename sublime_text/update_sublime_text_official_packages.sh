@@ -138,7 +138,7 @@ popd || exit
 #------------------#
 
 echo "[INFO] Update ST packages to ${branch_or_tag}..."
-cp -r "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
+command cp -rf "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
 
 
 #----------#

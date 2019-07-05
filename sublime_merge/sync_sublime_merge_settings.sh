@@ -12,6 +12,6 @@ if [ ! -d .git ]; then
 fi
 
 git fetch --tags --force --prune --all
-git reset --hard @{upstream}
+git reset --hard "@{upstream}"
 
 popd || exit
