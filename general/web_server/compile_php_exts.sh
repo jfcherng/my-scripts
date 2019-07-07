@@ -51,6 +51,7 @@ declare -A PHP_EXTS_CHECKOUT=(
 declare -A PHP_EXTS_CONFIG=(
     ["imagick"]="--with-imagick=/usr/local/imagemagick"
     ["jsond"]="--enable-jsond-prefixing"
+    ["redis"]="--enable-redis-igbinary --enable-redis-lzf"
     ["xdebug"]="--enable-xdebug"
 )
 
@@ -118,6 +119,7 @@ if command -v yum >/dev/null 2>&1; then
     yum install -y \
         mpdecimal mpdecimal-devel \
         libsodium libsodium-devel \
+        liblzf liblzf-devel \
         ImageMagick ImageMagick-devel ImageMagick-perl
 # apt
 elif command -v apt >/dev/null 2>&1; then
