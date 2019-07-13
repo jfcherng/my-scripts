@@ -194,4 +194,11 @@ echo "==================================="
 
 "${NGINX_INSTALL_DIR}/sbin/nginx" -V
 
+# try to restart the daemon if NGINX works normally
+if [ $? -eq 0 ]; then
+    daemon="/etc/init.d/nginx"
+
+    [ -x "${daemon}" ] && "${daemon}" restart
+fi
+
 popd || exit

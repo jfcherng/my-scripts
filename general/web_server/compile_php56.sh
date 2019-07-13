@@ -224,4 +224,11 @@ popd || exit
 
 "${php_install_dir}/bin/php" -v
 
+# try to restart the daemon if PHP works normally
+if [ $? -eq 0 ]; then
+    daemon="/etc/init.d/php${php_version_path}-fpm"
+
+    [ -x "${daemon}" ] && "${daemon}" restart
+fi
+
 popd || exit
