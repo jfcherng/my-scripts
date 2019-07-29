@@ -13,6 +13,8 @@ PKG_GITHUB_URL="https://github.com/sublimehq/Packages"
 PKG_REMOTE_REPO="${PKG_GITHUB_URL}.git"
 
 ST_INSTALL_DIRS=(
+    # this script's dir
+    "${SCRIPT_DIR}"
     # Windows
     "C:/Program Files/Sublime Text 3"
     # Linux
@@ -49,22 +51,48 @@ pushd "${TEMP_DIR}" || exit
 # try to find the ST installation directory #
 #-------------------------------------------#
 
-for st_install_dir in "${ST_INSTALL_DIRS[@]}"; do
-    st_pkgs_dir="${st_install_dir%/}/Packages"
+paths_to_check=(
+    "Packages/"
+    "sublime.py"
+    "sublime_plugin.py"
+)
 
-    if [ -d "${st_pkgs_dir}" ]; then
-        echo "[INFO][V] ST installation directory: '${st_pkgs_dir}'"
+for st_install_dir in "${ST_INSTALL_DIRS[@]}"; do
+    st_install_dir="${st_install_dir%/}"
+
+    path_check_passed=true
+    for path_to_check in "${paths_to_check[@]}"; do
+        path_to_check="${st_install_dir}/${path_to_check}"
+
+        # if the path under checking is a dir, it ends with a slash
+        if [[ "${path_to_check}" =~ /$ ]]; then
+            if [ ! -d "${path_to_check}" ]; then
+                path_check_passed=false
+                break
+            fi
+        else
+            if [ ! -f "${path_to_check}" ]; then
+                path_check_passed=false
+                break
+            fi
+        fi
+    done
+
+    if ${path_check_passed}; then
+        echo "[INFO][V] ST installation directory: '${st_install_dir}'"
         break
     else
-        echo "[INFO][X] ST installation directory: '${st_pkgs_dir}'"
-        st_pkgs_dir=""
+        echo "[INFO][X] ST installation directory: '${st_install_dir}'"
+        st_install_dir=""
     fi
 done
 
-if [ "${st_pkgs_dir}" = "" ]; then
+if [ "${st_install_dir}" = "" ]; then
     echo "[ERROR] Cannot find the ST installation directory..."
     exit 1
 fi
+
+st_pkgs_dir="${st_install_dir}/Packages"
 
 
 #----------------------------#
