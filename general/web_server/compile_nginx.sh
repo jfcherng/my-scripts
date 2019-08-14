@@ -42,7 +42,7 @@ declare -A NGINX_CMD=(
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
-    ["ngx_njs"]="tags/0.3.3"
+    ["ngx_njs"]="tags/0.3.4"
     # deps
     ["luajit2"]="tags/v2.1-20190626"
 )
