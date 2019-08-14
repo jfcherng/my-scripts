@@ -29,22 +29,16 @@ declare -A NGINX_CMD=(
     ["nginx"]="git clone https://github.com/nginx/nginx.git"
     # modules
     ["ngx_brotli"]="git clone https://github.com/google/ngx_brotli.git ngx_brotli"
-    ["ngx_devel_kit"]="git clone https://github.com/simplresty/ngx_devel_kit.git ngx_devel_kit"
     ["ngx_headers_more"]="git clone https://github.com/openresty/headers-more-nginx-module.git ngx_headers_more"
     ["ngx_http_concat"]="git clone https://github.com/alibaba/nginx-http-concat.git ngx_http_concat"
     ["ngx_http_trim"]="git clone https://github.com/taoyuanyuan/ngx_http_trim_filter_module.git ngx_http_trim"
-    ["ngx_lua"]="git clone https://github.com/openresty/lua-nginx-module.git ngx_lua"
     ["ngx_njs"]="git clone https://github.com/nginx/njs.git ngx_njs"
-    # deps
-    ["luajit2"]="git clone https://github.com/openresty/luajit2.git luajit2"
 )
 
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
     ["ngx_njs"]="tags/0.3.4"
-    # deps
-    ["luajit2"]="tags/v2.1-20190626"
 )
 
 
@@ -117,36 +111,6 @@ if command -v jemalloc-config >/dev/null 2>&1; then
 fi
 
 
-#-----------------#
-# compile luajit2 #
-#-----------------#
-
-echo "==================================="
-echo "Begin compile 'luajit2'..."
-echo "==================================="
-
-pushd "luajit2" || exit
-
-luajit2_install_dir="/usr/local"
-
-make PREFIX="${luajit2_install_dir}" -j "${THREAD_CNT}" || exit
-make install PREFIX="${luajit2_install_dir}" || exit
-git_repo_clean
-
-ldconfig
-
-export LUAJIT_LIB="${luajit2_install_dir}/lib"
-export LUAJIT_INC="${luajit2_install_dir}/include/luajit-2.1"
-
-NGINX_FLAGS+=( "--with-ld-opt='-Wl,-rpath,${LUAJIT_LIB}'" )
-
-popd || exit
-
-echo "==================================="
-echo "End compile 'luajit2'..."
-echo "==================================="
-
-
 #---------------#
 # compile NGINX #
 #---------------#
@@ -169,11 +133,9 @@ pushd nginx || exit
     --with-http_v2_module \
     --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
     --add-module="${SCRIPT_DIR}/ngx_brotli" \
-    --add-module="${SCRIPT_DIR}/ngx_devel_kit" \
     --add-module="${SCRIPT_DIR}/ngx_headers_more" \
     --add-module="${SCRIPT_DIR}/ngx_http_concat" \
     --add-module="${SCRIPT_DIR}/ngx_http_trim" \
-    --add-module="${SCRIPT_DIR}/ngx_lua" \
     --add-module="${SCRIPT_DIR}/ngx_njs/nginx" \
     ${NGINX_FLAGS[@]}
 
