@@ -9,7 +9,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
-APP_NAME=Percona-Server-8.0.15-6
+APP_NAME=Percona-Server-8.0.16-7
 TAR_FILE_BASENAME=${APP_NAME,,}
 TAR_FILE_NAME=${TAR_FILE_BASENAME}.tar.gz
 
