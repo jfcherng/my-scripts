@@ -26,7 +26,7 @@ OPENSSL_VERSION="1.1.1c"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
-    ["nginx"]="git clone https://github.com/nginx/nginx.git"
+    ["nginx"]="git clone https://github.com/nginx/nginx.git nginx"
     # modules
     ["ngx_brotli"]="git clone https://github.com/google/ngx_brotli.git ngx_brotli"
     ["ngx_headers_more"]="git clone https://github.com/openresty/headers-more-nginx-module.git ngx_headers_more"
