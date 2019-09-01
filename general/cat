@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# This script is a drop-in replacement for "cat" with "bat".
+# If "bat" is installed, it invokes "bat" for "cat".
+# Otherwise, it just use system's built-in "cat".
+#
+# Usage: Put this script in /usr/local/bin/cat and install "bat"
+#
+# @see https://github.com/sharkdp/bat
+
+BAT="$(command -v bat)"
+
+if [[ "${BAT}" != "" ]]; then
+    "${BAT}" \
+        --paging=never \
+        --style=plain \
+        --theme="Monokai Extended Origin" \
+        "$@"
+else
+    /usr/bin/cat "$@"
+fi
