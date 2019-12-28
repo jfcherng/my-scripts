@@ -224,6 +224,7 @@ if command -v yum >/dev/null 2>&1; then
         freetype-devel \
         gmp-devel \
         icu libicu libicu-devel \
+        libc-client uw-imap-devel \
         libjpeg-devel libpng-devel libwebp-devel libXpm-devel \
         libsodium libsodium-devel \
         libxml2 libxml2-devel \
@@ -237,6 +238,7 @@ elif command -v apt >/dev/null 2>&1; then
     apt update
     apt install -y \
         bzip2 bzip2-dev \
+        libc-client-dev libkrb5-dev \
         libfreetype6-dev \
         libgmp-dev \
         libjpeg-dev libpng-dev libwebp-dev libxpm-dev \
@@ -326,6 +328,7 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
     --with-gettext \
     --with-gmp \
     --with-iconv-dir="/usr/local" \
+    --with-imap --with-kerberos --with-imap-ssl --with-libdir="lib64" \
     --with-libxml-dir="/usr" \
     --with-libzip="/usr/local" \
     --with-mhash \
