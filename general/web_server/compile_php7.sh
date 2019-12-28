@@ -224,14 +224,14 @@ if command -v yum >/dev/null 2>&1; then
         freetype-devel \
         gmp-devel \
         icu libicu libicu-devel \
-        libsodium libsodium-devel \
         libjpeg-devel libpng-devel libwebp-devel libXpm-devel \
+        libsodium libsodium-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
         ncurses ncurses-devel \
         pcre-devel oniguruma-devel \
-        sqlite-devel \
-        readline-devel
+        readline-devel \
+        sqlite-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
@@ -240,11 +240,11 @@ elif command -v apt >/dev/null 2>&1; then
         libfreetype6-dev \
         libgmp-dev \
         libjpeg-dev libpng-dev libwebp-dev libxpm-dev \
-        libonig libonig-dev \
-        libxml2 libxml2-dev \
         libncurses libncurses-dev \
+        libonig libonig-dev \
         libsodium23 libsodium-dev \
-        libsqlite3 libsqlite3-dev
+        libsqlite3 libsqlite3-dev \
+        libxml2 libxml2-dev
 else
     echo "Could not find 'yum' or 'apt'..."
 fi
