@@ -53,6 +53,7 @@ yum install -y \
     freetype-devel \
     gmp-devel \
     icu libicu libicu-devel \
+    libc-client uw-imap-devel \
     libjpeg-devel libpng-devel libwebp-devel \
     libmcrypt-devel \
     libssh2-devel \
@@ -196,6 +197,7 @@ pushd "${php_src_dir}" || exit
     --with-gettext \
     --with-gmp \
     --with-iconv-dir="/usr/local" \
+    --with-imap --with-kerberos --with-imap-ssl --with-libdir="lib64" \
     --with-libxml-dir="/usr" \
     --with-libzip \
     --with-mhash \
