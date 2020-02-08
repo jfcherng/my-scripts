@@ -28,7 +28,6 @@ declare -A PHP_EXTS_CMD=(
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
     ["igbinary"]="git clone https://github.com/igbinary/igbinary.git igbinary"
     ["imagick"]="git clone https://github.com/mkoppanen/imagick.git imagick"
-    ["jsond"]="git clone https://github.com/bukka/php-jsond.git jsond"
     ["mcrypt"]="git clone https://github.com/php/pecl-encryption-mcrypt mcrypt"
     ["mongodb"]="git clone https://github.com/mongodb/mongo-php-driver.git mongodb"
     ["msgpack"]="git clone https://github.com/msgpack/msgpack-php.git msgpack"
@@ -52,7 +51,6 @@ declare -A PHP_EXTS_CHECKOUT=(
 # extra flags appended to php-config
 declare -A PHP_EXTS_CONFIG=(
     ["imagick"]="--with-imagick=/usr/local/imagemagick"
-    ["jsond"]="--enable-jsond-prefixing"
     ["redis"]="--enable-redis-igbinary --enable-redis-lzf"
     ["xdebug"]="--enable-xdebug"
 )
