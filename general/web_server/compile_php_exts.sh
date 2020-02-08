@@ -44,6 +44,8 @@ declare -A PHP_EXTS_CMD=(
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
+    ["decimal"]="origin/1.x"
+    ["swoole"]="origin/v4.4.x"
     ["xxhash"]="origin/develop"
 )
 
