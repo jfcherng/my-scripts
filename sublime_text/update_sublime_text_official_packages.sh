@@ -16,6 +16,7 @@ ST_INSTALL_DIRS=(
     # this script's dir
     "${SCRIPT_DIR}"
     # Windows
+    "C:/Program Files/Sublime Text"
     "C:/Program Files/Sublime Text 3"
     # Linux
     "/opt/sublime_text"
@@ -53,8 +54,6 @@ pushd "${TEMP_DIR}" || exit
 
 paths_to_check=(
     "Packages/"
-    "sublime.py"
-    "sublime_plugin.py"
 )
 
 for st_install_dir in "${ST_INSTALL_DIRS[@]}"; do
