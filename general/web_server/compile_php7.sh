@@ -268,11 +268,11 @@ if [ "${MEMSIZE_MB}" -lt "256" ]; then
     LOW_MEMORY_FLAGS+=('--disable-fileinfo')
 fi
 
-ZEND_EXTRA_LIBS=()
+EXTRA_FLAGS=()
 
 # if we could link to the iconv library, add a flag for it
 if ldconfig -p | grep libiconv >/dev/null 2>&1; then
-    ZEND_EXTRA_LIBS+=('-liconv')
+    EXTRA_FLAGS+=('-liconv')
 fi
 
 pushd "php-src" || exit
@@ -340,12 +340,13 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
     --with-xsl \
     --with-zip \
     --with-zlib --with-zlib-dir \
+    LDFLAGS="${EXTRA_FLAGS[*]}" \
     ${LOW_MEMORY_FLAGS[*]}
 
 # PEAR is no longer maintained, ignore errors about PEAR
 sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
 
-make -j "${thread_count}" ZEND_EXTRA_LIBS="${ZEND_EXTRA_LIBS[*]}" || exit
+make -j "${thread_count}" ZEND_EXTRA_LIBS="${EXTRA_FLAGS[*]}" || exit
 make install || exit
 git_repo_clean
 
