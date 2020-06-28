@@ -6,6 +6,7 @@
 export FORCE_COLOR=0
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+NOW="$(date +%Y%m%d-%H%M%S)"
 
 NODE_MODULES_LOCATIONS=(
     # This script's directory
@@ -43,15 +44,16 @@ function patch_intelephense {
 
     sed -i"" \
         $(: license always active ) \
-        -e "s@\bisActive()[[:space:]]*{@\0 return 1;@g" \
+        -e "s@\bisActive()[[:space:]]*{@\0 return true;@g" \
+        -e "s@\bisExpired()[[:space:]]*{@\0 return false;@g" \
+        -e "s@\bisRevoked()[[:space:]]*{@\0 return false;@g" \
         $(: enable all capabilities ) \
-        -e "s@\bdocumentFormattingProvider:@\0 1 ||@g" \
-        -e "s@\bdocumentRangeFormattingProvider:@\0 1 ||@g" \
-        -e "s@\bfoldingRangeProvider:@\0 1 ||@g" \
-        -e "s@\bimplementationProvider:@\0 1 ||@g" \
-        -e "s@\bdeclarationProvider:@\0 1 ||@g" \
-        -e "s@\brenameProvider:@\0 1 ||@g" \
-        -e "s@\btypeDefinitionProvider:@\0 1 ||@g" \
+        -e "s@\bdeclarationProvider:@\0 true ||@g" \
+        -e "s@\bfoldingRangeProvider:@\0 true ||@g" \
+        -e "s@\bimplementationProvider:@\0 true ||@g" \
+        -e "s@\brenameProvider:@\0 true ||@g" \
+        -e "s@\bselectionRangeProvider:@\0 true ||@g" \
+        -e "s@\btypeDefinitionProvider:@\0 true ||@g" \
         $(: nullify telemetry ) \
         -e "s@\bintelephense\.com@example.com@g" \
         "${intelephense_js}"
@@ -74,6 +76,9 @@ for NODE_MODULES in "${NODE_MODULES_LOCATIONS[@]}"; do
             echo "- File seems to be patched already hence skipped."
             continue
         fi
+
+        # backup
+        cp "${INTELEPHENSE_JS}" "${INTELEPHENSE_JS}.${NOW}"
 
         patch_intelephense "${INTELEPHENSE_JS}"
 
