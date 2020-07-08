@@ -225,7 +225,7 @@ if command -v yum >/dev/null 2>&1; then
         gmp-devel \
         icu libicu libicu-devel \
         libc-client uw-imap-devel \
-        libjpeg-devel libpng-devel libwebp-devel libXpm-devel \
+        libjpeg-devel libpng-devel libwebp7-devel libXpm-devel \
         libsodium libsodium-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
@@ -241,7 +241,7 @@ elif command -v apt >/dev/null 2>&1; then
         libc-client-dev libkrb5-dev \
         libfreetype6-dev \
         libgmp-dev \
-        libjpeg-dev libpng-dev libwebp-dev libxpm-dev \
+        libjpeg-dev libpng-dev libwebp7-dev libxpm-dev \
         libncurses libncurses-dev \
         libonig libonig-dev \
         libsodium23 libsodium-dev \
