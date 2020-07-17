@@ -48,6 +48,7 @@ function patch_intelephense {
         -e "s@\bisExpired()[[:space:]]*{@\0 return false;@g" \
         -e "s@\bisRevoked()[[:space:]]*{@\0 return false;@g" \
         $(: enable all capabilities ) \
+        -e "s@\bcodeActionProvider:@\0 true ||@g" \
         -e "s@\bdeclarationProvider:@\0 true ||@g" \
         -e "s@\bfoldingRangeProvider:@\0 true ||@g" \
         -e "s@\bimplementationProvider:@\0 true ||@g" \
@@ -55,7 +56,7 @@ function patch_intelephense {
         -e "s@\bselectionRangeProvider:@\0 true ||@g" \
         -e "s@\btypeDefinitionProvider:@\0 true ||@g" \
         $(: nullify telemetry ) \
-        -e "s@\bintelephense\.com@example.com@g" \
+        -e "s@\bintelephense\.com@does-not-exist.xxx@g" \
         "${intelephense_js}"
 
     # add patched marker
