@@ -42,7 +42,7 @@ function windows_path_fix {
 function patch_intelephense {
     intelephense_js="$1"
 
-    sed -i"" \
+    sed -i.bak \
         $(: license always active ) \
         -e "s@\bisActive()[[:space:]]*{@\0 return true;@g" \
         -e "s@\bisExpired()[[:space:]]*{@\0 return false;@g" \
