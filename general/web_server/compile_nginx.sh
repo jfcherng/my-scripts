@@ -90,7 +90,8 @@ openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
 openssl_src_dir="openssl-${OPENSSL_VERSION}"
 if [ ! -d "${openssl_src_dir}" ]; then
     rm -f -- openssl-* # also remove downloaded old libs
-    wget --no-check-certificate "https://www.openssl.org/source/${openssl_tarball}"
+
+    curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
 
     if [ ! -s "${openssl_tarball}" ]; then
         echo "Failed to download OpenSSL tarball..."
@@ -98,6 +99,9 @@ if [ ! -d "${openssl_src_dir}" ]; then
     fi
 
     tar xf "${openssl_tarball}"
+
+    # GitHub's release has an extra prefixed "openssl-", we remove it
+    mv -f "openssl-${openssl_src_dir}" "${openssl_src_dir}"
 fi
 
 
