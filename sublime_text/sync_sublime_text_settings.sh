@@ -13,5 +13,7 @@ fi
 
 git fetch --tags --force --prune --all
 git reset --hard "@{upstream}"
+git submodule init
+git submodule update
 
 popd || exit
