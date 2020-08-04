@@ -152,7 +152,7 @@ for dir in */; do
         echo "[INFO] Pack up '${pkg_name}'..."
     fi
 
-    zip -9r ${zip_quiet} "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" ./*
+    zip -9r ${zip_quiet} "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" .
 
     popd || exit
 done
