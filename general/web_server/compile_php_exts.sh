@@ -22,7 +22,6 @@ PHP_BASE_DIRS=(
 declare -A PHP_EXTS_CMD=(
     ["apcu"]="git clone https://github.com/krakjoe/apcu.git apcu"
     ["ast"]="git clone https://github.com/nikic/php-ast.git ast"
-    ["decimal"]="git clone https://github.com/php-decimal/ext-decimal.git decimal"
     ["ds"]="git clone https://github.com/php-ds/extension.git ds"
     ["event"]="git clone https://bitbucket.org/osmanov/pecl-event.git event"
     ["hashids"]="git clone https://github.com/cdoco/hashids.phpc.git hashids"
@@ -38,14 +37,11 @@ declare -A PHP_EXTS_CMD=(
     ["swoole"]="git clone https://github.com/swoole/swoole-src.git swoole"
     ["xdebug"]="git clone https://github.com/xdebug/xdebug.git xdebug"
     ["xlswriter"]="git clone https://github.com/viest/php-ext-excel-export.git xlswriter"
-    ["xxhash"]="git clone https://github.com/Megasaxon/php-xxhash.git xxhash"
 )
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
-    ["decimal"]="origin/1.x"
     ["swoole"]="origin/v4.4.x"
-    ["xxhash"]="origin/develop"
 )
 
 # extra flags appended to php-config
