@@ -1,6 +1,0 @@
-[submodule "sublime_merge/slm-patcher"]
-	path = sublime_merge/slm-patcher
-	url = https://github.com/bousqi/slm-patcher.git
-[submodule "sublime_text/slt-patcher"]
-	path = sublime_text/slt-patcher
-	url = https://github.com/deyixtan/slt-patcher.git
