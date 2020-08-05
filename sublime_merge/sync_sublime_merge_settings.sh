@@ -1,19 +1,35 @@
 #!/usr/bin/env bash
 
-SM_DATA_DIR=~/.config/sublime-merge
+SM_DATA_DIRS=(
+    # Windows
+    "${APPDATA}/Sublime Merge"
+    # Linux
+    "${HOME}/.config/sublime-merge"
+    # Mac
+    "${HOME}/Library/Application Support/Sublime Merge"
+)
 
-pushd "${SM_DATA_DIR}" || exit
+for data_dir in "${SM_DATA_DIRS[@]}"; do
+    if [ ! -d "${data_dir}" ]; then
+        continue
+    fi
 
-if [ ! -d .git ]; then
-    git init
-    git remote add origin git@github.com:jfcherng/my-Sublime-Merge-settings.git
-    git pull origin master
-    git branch -u origin/master
-fi
+    echo "* Targeting Data directory: ${data_dir}"
 
-git fetch --tags --force --prune --all
-git reset --hard "@{upstream}"
-git submodule init
-git submodule update
+    pushd "${data_dir}" || exit
 
-popd || exit
+    if [ ! -d .git ]; then
+        git init
+        git remote add origin git@github.com:jfcherng/my-Sublime-Merge-settings.git
+        git pull origin master
+        git branch -u origin/master
+    fi
+
+    git fetch --tags --force --prune --all
+    git reset --hard "@{upstream}"
+    git submodule update --init --recursive --force
+
+    popd || exit
+
+    break
+done

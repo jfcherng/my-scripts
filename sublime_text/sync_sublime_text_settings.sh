@@ -1,19 +1,38 @@
 #!/usr/bin/env bash
 
-ST_DATA_DIR=~/.config/sublime-text-3
+ST_DATA_DIRS=(
+    # Windows
+    "${APPDATA}/Sublime Text"
+    "${APPDATA}/Sublime Text 3"
+    # Linux
+    "${HOME}/.config/sublime-text"
+    "${HOME}/.config/sublime-text-3"
+    # Mac
+    "${HOME}/Library/Application Support/Sublime Text"
+    "${HOME}/Library/Application Support/Sublime Text 3"
+)
 
-pushd "${ST_DATA_DIR}" || exit
+for data_dir in "${ST_DATA_DIRS[@]}"; do
+    if [ ! -d "${data_dir}" ]; then
+        continue
+    fi
 
-if [ ! -d .git ]; then
-    git init
-    git remote add origin git@github.com:jfcherng/my-Sublime-Text-settings.git
-    git pull origin master
-    git branch -u origin/master
-fi
+    echo "* Targeting Data directory: ${data_dir}"
 
-git fetch --tags --force --prune --all
-git reset --hard "@{upstream}"
-git submodule init
-git submodule update
+    pushd "${data_dir}" || exit
 
-popd || exit
+    if [ ! -d .git ]; then
+        git init
+        git remote add origin git@github.com:jfcherng/my-Sublime-Text-settings.git
+        git pull origin master
+        git branch -u origin/master
+    fi
+
+    git fetch --tags --force --prune --all
+    git reset --hard "@{upstream}"
+    git submodule update --init --recursive --force
+
+    popd || exit
+
+    break
+done
