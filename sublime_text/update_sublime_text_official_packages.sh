@@ -13,15 +13,18 @@ PKG_GITHUB_URL="https://github.com/sublimehq/Packages"
 PKG_REMOTE_REPO="${PKG_GITHUB_URL}.git"
 
 ST_INSTALL_DIRS=(
-    # this script's dir
+    # this script's dir and its parent
     "${SCRIPT_DIR}"
+    "${SCRIPT_DIR}/.."
     # Windows
     "C:/Program Files/Sublime Text"
     "C:/Program Files/Sublime Text 3"
     # Linux
     "/opt/sublime_text"
+    "/opt/sublime_text_3"
     # Mac
     "/Applications/Sublime Text.app/Contents/MacOS"
+    "/Applications/Sublime Text 3.app/Contents/MacOS"
 )
 
 
