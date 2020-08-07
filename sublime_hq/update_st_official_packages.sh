@@ -7,7 +7,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # configs #
 #---------#
 
-DEBUG=false
 TEMP_DIR=".Sublime-Official-Packages"
 PKG_GITHUB_URL="https://github.com/sublimehq/Packages"
 PKG_REMOTE_REPO="${PKG_GITHUB_URL}.git"
@@ -28,21 +27,24 @@ ST_INSTALL_DIRS=(
 )
 
 
+#-----------#
+# functions #
+#-----------#
+
+pushd() {
+    # suppress messages from pushd, which is usually verbose
+    command pushd "$@" > /dev/null
+}
+
+popd() {
+    # suppress messages from popd, which is usually verbose
+    command popd > /dev/null
+}
+
+
 #-------#
 # begin #
 #-------#
-
-if ${DEBUG}; then
-    zip_quiet="-q"
-
-    pushd() {
-        command pushd "$@" > /dev/null
-    }
-
-    popd() {
-        command popd > /dev/null
-    }
-fi
 
 pushd "${SCRIPT_DIR}" || exit
 
@@ -57,30 +59,31 @@ pushd "${TEMP_DIR}" || exit
 
 paths_to_check=(
     "Packages/"
+    "changelog.txt"
 )
 
 for st_install_dir in "${ST_INSTALL_DIRS[@]}"; do
     st_install_dir="${st_install_dir%/}"
 
-    path_check_passed=true
+    is_passed=1
     for path_to_check in "${paths_to_check[@]}"; do
         path_to_check="${st_install_dir}/${path_to_check}"
 
         # if the path under checking is a dir, it ends with a slash
         if [[ "${path_to_check}" =~ /$ ]]; then
             if [ ! -d "${path_to_check}" ]; then
-                path_check_passed=false
+                is_passed=0
                 break
             fi
         else
             if [ ! -f "${path_to_check}" ]; then
-                path_check_passed=false
+                is_passed=0
                 break
             fi
         fi
     done
 
-    if ${path_check_passed}; then
+    if [ "${is_passed}" = "1" ]; then
         echo "[INFO][V] ST installation directory: '${st_install_dir}'"
         break
     else
@@ -151,11 +154,9 @@ for dir in */; do
 
     pkg_name=${dir%/}
 
-    if ${DEBUG}; then
-        echo "[INFO] Pack up '${pkg_name}'..."
-    fi
+    echo "[INFO] Packaging '${pkg_name}'..."
 
-    zip -9r ${zip_quiet} "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" .
+    zip -9rq "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" .
 
     popd || exit
 done
