@@ -22,7 +22,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="3.0.0-alpha4"
+OPENSSL_VERSION="1_1_1g"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -38,7 +38,7 @@ declare -A NGINX_CMD=(
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
-    ["ngx_njs"]="tags/0.4.2"
+    ["ngx_njs"]="tags/0.4.3"
 )
 
 
@@ -86,8 +86,8 @@ done
 # check openssl #
 #---------------#
 
-openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
-openssl_src_dir="openssl-${OPENSSL_VERSION}"
+openssl_tarball="OpenSSL_${OPENSSL_VERSION}.tar.gz"
+openssl_src_dir="OpenSSL_${OPENSSL_VERSION}"
 if [ ! -d "${openssl_src_dir}" ]; then
     rm -f -- openssl-* # also remove downloaded old libs
 
