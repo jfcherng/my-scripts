@@ -125,22 +125,30 @@ echo "==================================="
 
 pushd nginx || exit
 
+# to load compiled dynamic modules, add the following at the very top of the main NGINX config file:
+#     load_module modules/ngx_http_brotli_filter_module.so;
+#     load_module modules/ngx_http_brotli_static_module.so;
+#     load_module modules/ngx_http_headers_more_filter_module.so;
+#     load_module modules/ngx_http_js_module.so;
+
 ./auto/configure \
     --prefix=/usr/local/nginx \
     --user=www \
     --group=www \
+    --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
+    `# built-in modules` \
     --with-http_flv_module \
     --with-http_gzip_static_module \
     --with-http_realip_module \
     --with-http_ssl_module \
     --with-http_stub_status_module \
     --with-http_v2_module \
-    --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
-    --add-module="${SCRIPT_DIR}/ngx_brotli" \
-    --add-module="${SCRIPT_DIR}/ngx_headers_more" \
-    --add-module="${SCRIPT_DIR}/ngx_http_concat" \
-    --add-module="${SCRIPT_DIR}/ngx_http_trim" \
-    --add-module="${SCRIPT_DIR}/ngx_njs/nginx" \
+    `# 3rd-party modules` \
+    --add-dynamic-module="${SCRIPT_DIR}/ngx_brotli" \
+    --add-dynamic-module="${SCRIPT_DIR}/ngx_headers_more" \
+    --add-dynamic-module="${SCRIPT_DIR}/ngx_http_concat" \
+    --add-dynamic-module="${SCRIPT_DIR}/ngx_http_trim" \
+    --add-dynamic-module="${SCRIPT_DIR}/ngx_njs/nginx" \
     ${NGINX_FLAGS[@]}
 
 make -j "${THREAD_CNT}" || exit
