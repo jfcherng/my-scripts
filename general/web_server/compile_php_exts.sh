@@ -16,6 +16,7 @@ PHP_BASE_DIRS=(
     "/usr/local/php73"
     "/usr/local/php74"
     "/usr/local/php80"
+    "/usr/local/php81"
 )
 
 # the command used to clone a repo
@@ -41,7 +42,7 @@ declare -A PHP_EXTS_CMD=(
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
-    ["swoole"]="origin/v4.4.x"
+    ["swoole"]="origin/v4.5.x"
 )
 
 # extra flags appended to php-config

@@ -22,7 +22,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="1_1_1h"
+OPENSSL_VERSION="1_1_1i"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -38,7 +38,7 @@ declare -A NGINX_CMD=(
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
-    ["ngx_njs"]="tags/0.4.3"
+    ["ngx_njs"]="tags/0.5.0"
 )
 
 
