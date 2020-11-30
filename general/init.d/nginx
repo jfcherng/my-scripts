@@ -29,17 +29,17 @@ lockfile=/var/lock/subsys/nginx
 
 make_dirs() {
   # make required directories
-  user=`$nginx -V 2>&1 | grep "configure arguments:" | sed 's/[^*]*--user=\([^ ]*\).*/\1/g' -`
-  if [ -z "`grep $user /etc/passwd`" ]; then
-    useradd -M -s /bin/nologin $user
+  user=$($nginx -V 2>&1 | grep "configure arguments:" | sed 's/[^*]*--user=\([^ ]*\).*/\1/g' -)
+  if [ -z "$(grep "$user" /etc/passwd)" ]; then
+    useradd -M -s /bin/nologin "$user"
   fi
-  options=`$nginx -V 2>&1 | grep 'configure arguments:'`
+  options=$($nginx -V 2>&1 | grep 'configure arguments:')
   for opt in $options; do
-    if [ `echo $opt | grep '.*-temp-path'` ]; then
-      value=`echo $opt | cut -d "=" -f 2`
+    if [ $(echo "$opt" | grep '.*-temp-path') ]; then
+      value=$(echo "$opt" | cut -d "=" -f 2)
       if [ ! -d "$value" ]; then
         # echo "creating" $value
-        mkdir -p $value && chown -R $user $value
+        mkdir -p "$value" && chown -R "$user" "$value"
       fi
     fi
   done
@@ -49,7 +49,7 @@ start() {
   [ -x $nginx ] || exit 5
   [ -f $NGINX_CONF_FILE ] || exit 6
   make_dirs
-  echo -n $"Starting $prog: "
+  echo -n "Starting $prog: "
   daemon $nginx -c $NGINX_CONF_FILE
   retval=$?
   echo
@@ -58,8 +58,8 @@ start() {
 }
 
 stop() {
-  echo -n $"Stopping $prog: "
-  killproc $prog -QUIT
+  echo -n "Stopping $prog: "
+  killproc "$prog" -QUIT
   retval=$?
   echo
   [ $retval -eq 0 ] && rm -f $lockfile
@@ -75,7 +75,7 @@ restart() {
 
 reload() {
   configtest || return $?
-  echo -n $"Reloading $prog: "
+  echo -n "Reloading $prog: "
   killproc $nginx -HUP
   RETVAL=$?
   echo
@@ -90,7 +90,7 @@ configtest() {
 }
 
 rh_status() {
-  status $prog
+  status "$prog"
 }
 
 rh_status_q() {
@@ -123,6 +123,6 @@ case "$1" in
     rh_status_q || exit 0
     ;;
   *)
-    echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
+    echo "Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest}"
     exit 2
 esac
