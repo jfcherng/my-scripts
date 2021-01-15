@@ -298,6 +298,7 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
     --with-fpm-group="${php_run_user}" \
     --with-fpm-user="${php_run_user}" \
     --disable-debug \
+    --disable-phpdbg \
     --disable-rpath \
     --enable-bcmath \
     --enable-calendar \
