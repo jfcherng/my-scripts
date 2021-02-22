@@ -60,7 +60,7 @@ for repoName in "${!NGINX_CMD[@]}"; do
     # clone new repos
     if [ ! -d "${repoName}/.git" ]; then
         rm -rf "${repoName}"
-        eval "${NGINX_CMD[$repoName]}" || exit
+        eval "${NGINX_CMD[${repoName}]}" || exit
     fi
 
     pushd "${repoName}" || exit

@@ -118,7 +118,7 @@ fi
 # prefer using older bison
 if ! bison --version | grep -F -q "${bison_version}"; then
     echo "[*] temporarily set bison executable into PATH"
-    PATH="${bison_bin_dir}:$PATH"
+    PATH="${bison_bin_dir}:${PATH}"
 fi
 
 

@@ -84,7 +84,7 @@ PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFI
 #-----------------------------------------#
 
 for IDX in "${!PHP_BASE_DIRS[@]}"; do
-    PHP_BASE_DIR=${PHP_BASE_DIRS[$IDX]}
+    PHP_BASE_DIR=${PHP_BASE_DIRS[${IDX}]}
 
     # required files
     declare -A files=(
@@ -147,7 +147,7 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     # clone new repos
     if [ ! -d "${PHP_EXT_NAME}/.git" ]; then
         rm -rf "${PHP_EXT_NAME}"
-        eval "${PHP_EXTS_CMD[$PHP_EXT_NAME]}" || exit
+        eval "${PHP_EXTS_CMD[${PHP_EXT_NAME}]}" || exit
     fi
 
     pushd "${PHP_EXT_NAME}/" || exit

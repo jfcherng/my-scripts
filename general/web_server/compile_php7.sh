@@ -43,7 +43,7 @@ for repoName in "${!PHP_CMD[@]}"; do
     # clone new repos
     if [ ! -d "${repoName}/.git" ]; then
         rm -rf "${repoName}"
-        eval "${PHP_CMD[$repoName]}" || exit
+        eval "${PHP_CMD[${repoName}]}" || exit
     fi
 
     pushd "${repoName}" || exit
