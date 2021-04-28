@@ -17,6 +17,8 @@ PHP_BASE_DIRS=(
     "/usr/local/php74"
     "/usr/local/php80"
     "/usr/local/php81"
+    "/usr/local/php82"
+    "/usr/local/php83"
 )
 
 # the command used to clone a repo
