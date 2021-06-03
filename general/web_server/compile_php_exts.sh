@@ -44,7 +44,7 @@ declare -A PHP_EXTS_CMD=(
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
-    ["swoole"]="v4.6.6"
+    ["swoole"]="v4.6.7"
 )
 
 # extra flags appended to php-config
