@@ -219,34 +219,41 @@ echo "==================================="
 if command -v yum >/dev/null 2>&1; then
     yum install -y \
         aspell-en aspell-devel \
+        bison \
         bzip2 bzip2-devel \
         curl curl-devel \
         freetype-devel \
         gmp-devel \
         icu libicu libicu-devel \
         libc-client uw-imap-devel \
-        libjpeg-devel libpng-devel libwebp7-devel libXpm-devel \
+        libffi libffi-devel \
+        libjpeg-devel libpng-devel libwebp7-devel libwebp-devel libXpm-devel \
         libsodium libsodium-devel \
         libxml2 libxml2-devel \
         libxslt libxslt-devel \
         ncurses ncurses-devel \
         pcre-devel oniguruma-devel \
+        re2c \
         readline-devel \
         sqlite-devel
 # apt
 elif command -v apt >/dev/null 2>&1; then
     apt update
     apt install -y \
+        bison \
         bzip2 bzip2-dev \
         libc-client-dev libkrb5-dev \
+        libffi libffi-dev \
         libfreetype6-dev \
         libgmp-dev \
-        libjpeg-dev libpng-dev libwebp7-dev libxpm-dev \
+        libjpeg-dev libpng-dev libwebp-dev libwebp7-dev libxpm-dev \
         libncurses libncurses-dev \
         libonig libonig-dev \
         libsodium23 libsodium-dev \
         libsqlite3 libsqlite3-dev \
-        libxml2 libxml2-dev
+        libxml2 libxml2-dev \
+        re2c \
+        sqlite-devel
 else
     echo "Could not find 'yum' or 'apt'..."
 fi
@@ -259,12 +266,18 @@ echo "==================================="
 echo "Begin compile 'PHP'..."
 echo "==================================="
 
+# add user custom libs into search paths
+cat <<EOT > /etc/ld.so.conf.d/usr-local.conf
+/usr/local/lib
+/usr/local/lib64
+EOT
+
 # update library link paths
 ldconfig
 
 LOW_MEMORY_FLAGS=()
 
-if [ "${MEMSIZE_MB}" -lt "256" ]; then
+if [ "${MEMSIZE_MB}" -lt "512" ]; then
     LOW_MEMORY_FLAGS+=('--disable-fileinfo')
 fi
 
