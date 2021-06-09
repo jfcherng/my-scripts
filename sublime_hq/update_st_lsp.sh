@@ -3,7 +3,7 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ST_LSP_PACKAGE_PATH="${APPDATA}\Sublime Text\Installed Packages\LSP.sublime-package"
-INTERESTED_BRANCH="st4000-exploration"
+INTERESTED_BRANCH="main"
 
 pushd "${SCRIPT_DIR}" || exit
 
