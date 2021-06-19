@@ -22,7 +22,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="1_1_1k"
+OPENSSL_VERSION="3.0.0-beta1"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -86,10 +86,17 @@ done
 # check openssl #
 #---------------#
 
-openssl_tarball="OpenSSL_${OPENSSL_VERSION}.tar.gz"
-openssl_src_dir="OpenSSL_${OPENSSL_VERSION}"
+# install dependencies
+if command -v yum &> /dev/null; then
+    yum install -y perl-IPC-Cmd
+elif command -v dnf &> /dev/null; then
+    dnf install -y perl-IPC-Cmd
+fi
+
+openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
+openssl_src_dir="openssl-${OPENSSL_VERSION}"
 if [ ! -d "${openssl_src_dir}" ]; then
-    rm -f -- openssl-* # also remove downloaded old libs
+    rm -f -- openssl-* # remove downloaded old libs
 
     curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
 
