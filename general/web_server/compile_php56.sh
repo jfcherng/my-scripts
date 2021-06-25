@@ -10,6 +10,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 MEMSIZE_MB=$(free -m | awk '/^Mem:/{print $2}')
 
+NOW="$(date +%Y%m%d%H%M%S)"
+LOG_FILE="${SCRIPT_DIR}/compile_php56-${NOW}.log"
+
+{
 
 #----------------#
 # configurations #
@@ -234,3 +238,5 @@ if [ $? -eq 0 ]; then
 fi
 
 popd || exit
+
+} | tee "${LOG_FILE}"

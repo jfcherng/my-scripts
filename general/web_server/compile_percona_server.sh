@@ -9,6 +9,9 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
+NOW="$(date +%Y%m%d%H%M%S)"
+LOG_FILE="${SCRIPT_DIR}/compile_percona_server-${NOW}.log"
+
 APP_NAME=Percona-Server-8.0.23-14
 TAR_FILE_BASENAME=${APP_NAME,,}
 TAR_FILE_NAME=${TAR_FILE_BASENAME}.tar.gz
@@ -16,6 +19,8 @@ TAR_FILE_NAME=${TAR_FILE_BASENAME}.tar.gz
 INSTALL_DIR=/usr/local/mysql
 
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+
+{
 
 #-------------------#
 # check gcc version #
@@ -94,3 +99,5 @@ mkdir -p /data/mysql
 chown mysql.mysql -R /data/mysql
 
 popd || exit
+
+} | tee "${LOG_FILE}"

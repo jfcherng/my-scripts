@@ -10,6 +10,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 NGINX_FLAGS=()
 
+NOW="$(date +%Y%m%d%H%M%S)"
+LOG_FILE="${SCRIPT_DIR}/compile_nginx-${NOW}.log"
+
 function git_repo_clean {
     make clean >/dev/null 2>&1
     git clean -dfx
@@ -41,6 +44,7 @@ declare -A NGINX_MODULES_CHECKOUT=(
     ["ngx_njs"]="tags/0.6.0"
 )
 
+{
 
 #-------#
 # begin #
@@ -183,3 +187,5 @@ if [ $? -eq 0 ]; then
 fi
 
 popd || exit
+
+} | tee "${LOG_FILE}"

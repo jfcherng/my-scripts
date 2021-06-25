@@ -9,6 +9,9 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
+NOW="$(date +%Y%m%d%H%M%S)"
+LOG_FILE="${SCRIPT_DIR}/compile_php_exts-${NOW}.log"
+
 PHP_BASE_DIRS=(
     "/usr/local/php70"
     "/usr/local/php71"
@@ -70,6 +73,7 @@ function git_repo_clean {
     git checkout -- .
 }
 
+{
 
 #-------#
 # begin #
@@ -204,3 +208,5 @@ popd || exit
 tab_title
 
 popd || exit
+
+} | tee "${LOG_FILE}"
