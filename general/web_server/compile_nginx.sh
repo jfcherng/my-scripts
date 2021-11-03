@@ -92,7 +92,7 @@ done
 
 # install dependencies
 if command -v yum &> /dev/null; then
-    yum install -y perl-IPC-Cmd
+    yum install -y --skip-broken perl-IPC-Cmd
 elif command -v dnf &> /dev/null; then
     dnf install -y perl-IPC-Cmd
 fi

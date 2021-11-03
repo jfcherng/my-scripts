@@ -221,7 +221,7 @@ echo "==================================="
 
 # yum
 if command -v yum >/dev/null 2>&1; then
-    yum install -y \
+    yum install -y --skip-broken \
         aspell-en aspell-devel \
         bison \
         bzip2 bzip2-devel \

@@ -47,7 +47,7 @@ declare -A PHP_EXTS_CMD=(
 
 # checkout repo to a specific commit before compilation
 declare -A PHP_EXTS_CHECKOUT=(
-    ["swoole"]="v4.7.1"
+    ["swoole"]="v4.8.3"
 )
 
 # extra flags appended to php-config
@@ -119,7 +119,7 @@ echo "==================================="
 
 # yum
 if command -v yum >/dev/null 2>&1; then
-    yum install -y \
+    yum install -y --skip-broken \
         mpdecimal mpdecimal-devel \
         libsodium libsodium-devel \
         liblzf liblzf-devel \
