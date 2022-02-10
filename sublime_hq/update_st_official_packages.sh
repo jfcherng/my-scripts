@@ -41,6 +41,25 @@ popd() {
     command popd > /dev/null
 }
 
+clone_repo_ref() {
+    local repo_dir="$1"
+    local commit_ref="$2"
+
+    rm -rf "${repo_dir}" && mkdir -p "${repo_dir}"
+    pushd "${repo_dir}" || exit
+
+    # @see https://stackoverflow.com/questions/3489173
+    git init
+    git remote add origin "${PKG_REMOTE_REPO}"
+    git fetch --depth=1 origin "${commit_ref}"
+    git reset --hard FETCH_HEAD
+    local retcode="$?"
+
+    popd || exit
+
+    return "${retcode}"
+}
+
 
 #-------#
 # begin #
@@ -84,35 +103,32 @@ for st_install_dir in "${ST_INSTALL_DIRS[@]}"; do
     done
 
     if [ "${is_passed}" = "1" ]; then
-        echo "[INFO][V] ST installation directory: '${st_install_dir}'"
+        echo "[✔️] Found ST installation directory: '${st_install_dir}'"
         break
     else
-        echo "[INFO][X] ST installation directory: '${st_install_dir}'"
         st_install_dir=""
     fi
 done
 
 if [ "${st_install_dir}" = "" ]; then
-    echo "[ERROR] Cannot find the ST installation directory..."
+    echo "[❌] Could not find ST installation directory..."
     exit 1
 fi
 
 st_pkgs_dir="${st_install_dir}/Packages"
 
 
-#----------------------------#
-# read option: branch_or_tag #
-#----------------------------#
+#-------------------------#
+# read option: commit_ref #
+#-------------------------#
 
-echo "[INFO] You could check branches/tags on '${PKG_GITHUB_URL}/releases'"
-read -erp "Branch or tag to be used (such as 'v3152', default = 'master'): " branch_or_tag
+echo "[💡] You can use either branch, tag or even SHA as the reference."
+echo "[💡] You can check out references on '${PKG_GITHUB_URL}/commits'."
+read -erp "[❓] Which reference you want to used (such as 'v4126', default = 'master'): " commit_ref
 
-if [ "${branch_or_tag}" = "" ]; then
-    branch_or_tag="master"
-fi
-
-if [[ "${branch_or_tag}" =~ ^[0-9]+$ ]]; then
-    branch_or_tag="v${branch_or_tag}"
+if [ "${commit_ref}" = "" ]; then
+    commit_ref="master"
+    echo "[⚠️] Use default '${commit_ref}' as the reference."
 fi
 
 
@@ -122,16 +138,12 @@ fi
 
 repo_dir="repo"
 
-rm -rf "${repo_dir}"
+echo "[💬] Downloading repository..."
 
-echo "[INFO] Downloading repository..."
-
-git clone --depth=1 --branch="${branch_or_tag}" "${PKG_REMOTE_REPO}" "${repo_dir}"
-
-if [ $? -eq 0 ]; then
-    echo "[INFO] Download repository successfully!"
+if clone_repo_ref "${repo_dir}" "${commit_ref}"; then
+    echo "[✔️] Download repository successfully!"
 else
-    echo "[Error] Fail to checkout the branch/tag '${branch_or_tag}'..."
+    echo "[❌] Fail to checkout reference '${commit_ref}'."
     exit 1
 fi
 
@@ -146,7 +158,7 @@ mkdir -p "${packed_pkgs_dir}"
 
 pushd "${repo_dir}" || exit
 
-echo "[INFO] Pack up packages..."
+echo "[💬] Pack up packages..."
 
 # traverse all packages in the repo
 for dir in */; do
@@ -154,7 +166,7 @@ for dir in */; do
 
     pkg_name=${dir%/}
 
-    echo "[INFO] Packaging '${pkg_name}'..."
+    echo "[📦] Packaging '${pkg_name}'..."
 
     zip -9rq "../../${packed_pkgs_dir}/${pkg_name}.sublime-package" .
 
@@ -168,8 +180,8 @@ popd || exit
 # replace packages #
 #------------------#
 
-echo "[INFO] Update ST packages to ${branch_or_tag}..."
-command cp -rf "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
+echo "[💬] Update ST packages to '${commit_ref}'..."
+cp -rf "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
 
 
 #----------#
@@ -178,7 +190,7 @@ command cp -rf "${packed_pkgs_dir}"/*.sublime-package "${st_pkgs_dir}"
 
 popd || exit
 
-echo "[INFO] Clean up..."
+echo "[💬] Clean up..."
 rm -rf "${TEMP_DIR}"
 
 

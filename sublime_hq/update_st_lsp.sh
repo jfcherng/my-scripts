@@ -16,7 +16,7 @@ pushd "${SCRIPT_DIR}/LSP" || exit
 
 # fetch latest source
 git fetch --tags --force --prune --all || exit 1
-git reset --hard @{upstream} || exit 1
+git reset --hard "@{upstream}" || exit 1
 git checkout -f "${INTERESTED_BRANCH}" || exit 1
 git pull --autostash --rebase || exit 1
 

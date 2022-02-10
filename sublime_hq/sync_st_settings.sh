@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+SETTINGS_REPO="git@github.com:jfcherng/my-Sublime-Text-settings.git"
+BRANCH_DEFAULT="master"
+
 ST_DATA_DIRS=(
     # Windows
     "${APPDATA}/Sublime Text"
@@ -17,15 +20,15 @@ for data_dir in "${ST_DATA_DIRS[@]}"; do
         continue
     fi
 
-    echo "* Targeting Data directory: ${data_dir}"
+    echo "* Targeted Data directory: ${data_dir}"
 
     pushd "${data_dir}" || exit
 
     if [ ! -d .git ]; then
         git init
-        git remote add origin git@github.com:jfcherng/my-Sublime-Text-settings.git
-        git pull origin master
-        git branch -u origin/master
+        git remote add origin "${SETTINGS_REPO}"
+        git pull origin "${BRANCH_DEFAULT}"
+        git branch -u "origin/${BRANCH_DEFAULT}"
     fi
 
     git fetch --tags --force --prune --all
