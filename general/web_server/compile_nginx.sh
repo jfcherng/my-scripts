@@ -162,8 +162,7 @@ pushd nginx || exit
     --add-dynamic-module="${SCRIPT_DIR}/ngx_njs/nginx" \
     ${NGINX_FLAGS[@]}
 
-make -j "${THREAD_CNT}" || exit
-make install || exit
+make -j"${THREAD_CNT}" install || exit
 git_repo_clean
 
 popd || exit

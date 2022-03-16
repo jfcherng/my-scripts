@@ -364,8 +364,7 @@ sed -i"" -E "s/-dev/-dev@$(git rev-parse --short HEAD)/g" ./configure.ac
 # PEAR is no longer maintained, ignore errors about PEAR
 sed -i"" -E "s/^(install-pear):/.IGNORE: \1\n\1:/g" ./Makefile
 
-make -j "${thread_count}" ZEND_EXTRA_LIBS="${EXTRA_FLAGS[*]}" || exit
-make install || exit
+make -j"${thread_count}" install ZEND_EXTRA_LIBS="${EXTRA_FLAGS[*]}" || exit
 git_repo_clean
 
 popd || exit

@@ -183,7 +183,7 @@ for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
         # compile
         "${phpize}"
         ./configure --with-php-config="${php_config}" ${config_options}
-        make -j "${THREAD_CNT}" && make install
+        make -j"${THREAD_CNT}" install
         git_repo_clean
     done
 
