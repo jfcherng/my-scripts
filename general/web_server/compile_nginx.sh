@@ -25,7 +25,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="3.0.1"
+OPENSSL_VERSION="3.0.2"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
