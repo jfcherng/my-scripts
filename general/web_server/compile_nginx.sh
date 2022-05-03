@@ -100,7 +100,7 @@ fi
 openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
 openssl_src_dir="openssl-${OPENSSL_VERSION}"
 if [ ! -d "${openssl_src_dir}" ]; then
-    rm -f -- openssl-* # remove downloaded old libs
+    rm -rf -- openssl-* # remove downloaded old libs
 
     curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
 
