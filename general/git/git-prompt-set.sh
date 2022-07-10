@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #  Customize BASH PS1 prompt to show current GIT repository and branch.
 #  by Mike Stewart - http://MediaDoneRight.com
 
@@ -90,36 +91,41 @@ HostnameShort="\h"
 HostnameFull="\H"
 Dollar="\$"
 
-
-# This PS1 snippet was adopted from code for MAC/BSD I saw from: http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
-# I tweaked it to work on UBUNTU 11.04 & 11.10 plus made it mo' better
+# This PS1 snippet was adopted from code for MAC/BSD I saw from:
+# http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
 
 export PS1=\
-'['${Username}'@'${HostnameShort}' '${IYellow}${PathShort}${Color_Off}']\
+"[${Username}@${HostnameShort} ${IYellow}${PathShort}${Color_Off}]"'\
 $( \
-    git branch &>/dev/null; \
-    if [ $? -eq 0 ]; then \
-        branch=\($( \
-            git status | grep "nothing to commit" > /dev/null 2>&1; \
-            if [ "$?" -eq "0" ]; then \
-                # @4 - Clean repository - nothing to commit
-                echo "'${BIGreen}'$(__git_ps1 "%s")'${Color_Off}'"; \
-            else \
-                # @5 - Changes to working tree
-                echo "'${BIRed}'$(__git_ps1 "%s")'${Color_Off}'"; \
-            fi \
-        )\) \
+    if git rev-parse --is-inside-work-tree &>/dev/null; then \
+        git_status=$(git status --porcelain=2 --branch); \
+        branch_oid=$(sed -nr -e "s/^# branch\.oid (.*)$/\1/p" <<< "${git_status}"); \
+        branch_name=$(sed -nr -e "s/^# branch\.head (.*)$/\1/p" <<< "${git_status}"); \
+        branch_ab=$(sed -nr -e "s/^# branch\.ab (.*)$/\1/p" <<< "${git_status}"); \
 \
-        branch_status=$( \
-            git status --porcelain --branch | head -n1 | cut -d" " -f3- | \
-            sed -re "s/, *|\\\\[|\\\\]//g" | \
-            sed -re "s/ahead ([0-9]+)/'${BIGreen}'>\1'${Color_Off}'/g" | \
-            sed -re "s/behind ([0-9]+)/'${BIRed}'<\1'${Color_Off}'/g" \
+        branch=$( \
+            if grep -o "^[^#]" <<< "${git_status}" &>/dev/null; then \
+                # dirty working tree
+                echo "'${BIRed}'${branch_name}'${Color_Off}'"; \
+            else \
+                # clean working tree
+                echo "'${BIGreen}'${branch_name}'${Color_Off}'"; \
+            fi; \
         ); \
 \
-        echo "${branch}${branch_status}"; \
-    else \
-        # @2 - Prompt when not in GIT repo
-        echo ""; \
-    fi \
-)'${Dollar}' '
+        if [[ "${branch_oid}" = "(initial)" ]]; then \
+            # there is no commit yet
+            branch_status="('${BIRed}'initial'${Color_Off}')"; \
+        else \
+            branch_status=$( \
+                sed -r \
+                    -e "s/ +|[+-]0//g" \
+                    -e "s/\+([0-9]+)/'${BIGreen}'>\1'${Color_Off}'/g" \
+                    -e "s/\-([0-9]+)/'${BIRed}'<\1'${Color_Off}'/g" \
+                    <<< "${branch_ab}" \
+            ); \
+        fi; \
+\
+        echo -n "(${branch})${branch_status}"; \
+    fi; \
+)'"${Dollar} "
