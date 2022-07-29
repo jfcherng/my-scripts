@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-grep CentOS < "/boot/grub2/grub.cfg"
+grep CentOS <"/boot/grub2/grub.cfg"
 
 if [ "$?" = "1" ]; then
     echo "This script only designed to work on CentOS..."

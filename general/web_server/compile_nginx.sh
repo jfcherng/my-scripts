@@ -6,7 +6,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com> #
 #------------------------------------------#
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 NGINX_FLAGS=()
 
@@ -18,7 +18,6 @@ function git_repo_clean {
     git clean -dfx
     git checkout -- .
 }
-
 
 #--------#
 # config #
@@ -46,145 +45,140 @@ declare -A NGINX_MODULES_CHECKOUT=(
 
 {
 
-#-------#
-# begin #
-#-------#
+    #-------#
+    # begin #
+    #-------#
 
-pushd "${SCRIPT_DIR}" || exit
+    pushd "${SCRIPT_DIR}" || exit
 
-# prefer the latest user-installed libs if possible
-PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+    # prefer the latest user-installed libs if possible
+    PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
 
+    #-------------#
+    # check repos #
+    #-------------#
 
-#-------------#
-# check repos #
-#-------------#
+    for repoName in "${!NGINX_CMD[@]}"; do
+        # clone new repos
+        if [ ! -d "${repoName}/.git" ]; then
+            rm -rf "${repoName}"
+            eval "${NGINX_CMD[${repoName}]}" || exit
+        fi
 
-for repoName in "${!NGINX_CMD[@]}"; do
-    # clone new repos
-    if [ ! -d "${repoName}/.git" ]; then
-        rm -rf "${repoName}"
-        eval "${NGINX_CMD[${repoName}]}" || exit
+        pushd "${repoName}" || exit
+
+        git_repo_clean
+
+        # fetch the latest source
+        git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
+        git submodule update --init
+        git submodule foreach --recursive git pull
+
+        # checkout a specific commit if required
+        commit=${NGINX_MODULES_CHECKOUT[${repoName}]}
+        if [ "${commit}" != "" ]; then
+            git checkout -f "${commit}"
+        fi
+
+        popd || exit
+    done
+
+    #---------------#
+    # check openssl #
+    #---------------#
+
+    # install dependencies
+    if command -v yum &>/dev/null; then
+        yum install -y --skip-broken perl-IPC-Cmd
+    elif command -v dnf &>/dev/null; then
+        dnf install -y perl-IPC-Cmd
     fi
 
-    pushd "${repoName}" || exit
+    openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
+    openssl_src_dir="openssl-${OPENSSL_VERSION}"
+    if [ ! -d "${openssl_src_dir}" ]; then
+        rm -rf -- openssl-* # remove downloaded old libs
 
+        curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
+
+        if [ ! -s "${openssl_tarball}" ]; then
+            echo "Failed to download OpenSSL tarball..."
+            exit 1
+        fi
+
+        tar xf "${openssl_tarball}"
+
+        # GitHub's release has an extra prefixed "openssl-", we remove it
+        mv -f "openssl-${openssl_src_dir}" "${openssl_src_dir}"
+    fi
+
+    #----------------#
+    # check jemalloc #
+    #----------------#
+
+    if command -v jemalloc-config >/dev/null 2>&1; then
+        echo "[*] Compile NGINX with jemalloc"
+        NGINX_FLAGS+=("--with-ld-opt='-ljemalloc'")
+    fi
+
+    #---------------#
+    # compile NGINX #
+    #---------------#
+
+    echo "==================================="
+    echo "Begin compile 'NGINX'..."
+    echo "==================================="
+
+    pushd nginx || exit
+
+    # to load compiled dynamic modules, add the following at the very top of the main NGINX config file:
+    #     load_module modules/ngx_http_brotli_filter_module.so;
+    #     load_module modules/ngx_http_brotli_static_module.so;
+    #     load_module modules/ngx_http_headers_more_filter_module.so;
+    #     load_module modules/ngx_http_js_module.so;
+
+    ./auto/configure \
+        --prefix=/usr/local/nginx \
+        --user=www \
+        --group=www \
+        --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
+        `# built-in modules` \
+        --with-http_flv_module \
+        --with-http_gzip_static_module \
+        --with-http_realip_module \
+        --with-http_ssl_module \
+        --with-http_stub_status_module \
+        --with-http_v2_module \
+        `# 3rd-party modules` \
+        --add-dynamic-module="${SCRIPT_DIR}/ngx_brotli" \
+        --add-dynamic-module="${SCRIPT_DIR}/ngx_headers_more" \
+        --add-dynamic-module="${SCRIPT_DIR}/ngx_http_concat" \
+        --add-dynamic-module="${SCRIPT_DIR}/ngx_http_trim" \
+        --add-dynamic-module="${SCRIPT_DIR}/ngx_njs/nginx" \
+        ${NGINX_FLAGS[@]}
+
+    make -j"${THREAD_CNT}" install || exit
     git_repo_clean
 
-    # fetch the latest source
-    git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
-    git submodule update --init
-    git submodule foreach --recursive git pull
+    popd || exit
 
-    # checkout a specific commit if required
-    commit=${NGINX_MODULES_CHECKOUT[${repoName}]}
-    if [ "${commit}" != "" ]; then
-        git checkout -f "${commit}"
+    echo "==================================="
+    echo "End compile 'NGINX'..."
+    echo "==================================="
+
+    #-----#
+    # end #
+    #-----#
+
+    "${NGINX_INSTALL_DIR}/sbin/nginx" -V
+
+    # try to restart the daemon if NGINX works normally
+    if [ $? -eq 0 ]; then
+        daemon="/etc/init.d/nginx"
+
+        [ -x "${daemon}" ] && "${daemon}" restart
     fi
 
     popd || exit
-done
 
-
-#---------------#
-# check openssl #
-#---------------#
-
-# install dependencies
-if command -v yum &> /dev/null; then
-    yum install -y --skip-broken perl-IPC-Cmd
-elif command -v dnf &> /dev/null; then
-    dnf install -y perl-IPC-Cmd
-fi
-
-openssl_tarball="openssl-${OPENSSL_VERSION}.tar.gz"
-openssl_src_dir="openssl-${OPENSSL_VERSION}"
-if [ ! -d "${openssl_src_dir}" ]; then
-    rm -rf -- openssl-* # remove downloaded old libs
-
-    curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
-
-    if [ ! -s "${openssl_tarball}" ]; then
-        echo "Failed to download OpenSSL tarball..."
-        exit 1
-    fi
-
-    tar xf "${openssl_tarball}"
-
-    # GitHub's release has an extra prefixed "openssl-", we remove it
-    mv -f "openssl-${openssl_src_dir}" "${openssl_src_dir}"
-fi
-
-
-#----------------#
-# check jemalloc #
-#----------------#
-
-if command -v jemalloc-config >/dev/null 2>&1; then
-    echo "[*] Compile NGINX with jemalloc"
-    NGINX_FLAGS+=( "--with-ld-opt='-ljemalloc'" )
-fi
-
-
-#---------------#
-# compile NGINX #
-#---------------#
-
-echo "==================================="
-echo "Begin compile 'NGINX'..."
-echo "==================================="
-
-pushd nginx || exit
-
-# to load compiled dynamic modules, add the following at the very top of the main NGINX config file:
-#     load_module modules/ngx_http_brotli_filter_module.so;
-#     load_module modules/ngx_http_brotli_static_module.so;
-#     load_module modules/ngx_http_headers_more_filter_module.so;
-#     load_module modules/ngx_http_js_module.so;
-
-./auto/configure \
-    --prefix=/usr/local/nginx \
-    --user=www \
-    --group=www \
-    --with-openssl="${SCRIPT_DIR}/${openssl_src_dir}" \
-    `# built-in modules` \
-    --with-http_flv_module \
-    --with-http_gzip_static_module \
-    --with-http_realip_module \
-    --with-http_ssl_module \
-    --with-http_stub_status_module \
-    --with-http_v2_module \
-    `# 3rd-party modules` \
-    --add-dynamic-module="${SCRIPT_DIR}/ngx_brotli" \
-    --add-dynamic-module="${SCRIPT_DIR}/ngx_headers_more" \
-    --add-dynamic-module="${SCRIPT_DIR}/ngx_http_concat" \
-    --add-dynamic-module="${SCRIPT_DIR}/ngx_http_trim" \
-    --add-dynamic-module="${SCRIPT_DIR}/ngx_njs/nginx" \
-    ${NGINX_FLAGS[@]}
-
-make -j"${THREAD_CNT}" install || exit
-git_repo_clean
-
-popd || exit
-
-echo "==================================="
-echo "End compile 'NGINX'..."
-echo "==================================="
-
-
-#-----#
-# end #
-#-----#
-
-"${NGINX_INSTALL_DIR}/sbin/nginx" -V
-
-# try to restart the daemon if NGINX works normally
-if [ $? -eq 0 ]; then
-    daemon="/etc/init.d/nginx"
-
-    [ -x "${daemon}" ] && "${daemon}" restart
-fi
-
-popd || exit
-
-} | tee "${LOG_FILE}"
+} 2>&1 | tee "${LOG_FILE}"

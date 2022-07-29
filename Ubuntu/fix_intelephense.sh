@@ -2,7 +2,7 @@
 
 export FORCE_COLOR=0
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 NOW="$(date +%Y%m%d-%H%M%S)"
 
 SUB_PATH="intelephense/lib/intelephense.js"
@@ -41,7 +41,6 @@ function windows_path_fix {
     echo "${path}"
 }
 
-
 function patch_intelephense {
     intelephense_js="$1"
 
@@ -72,7 +71,7 @@ function patch_intelephense {
     rm -f "${intelephense_js}.my_bak"
 
     # add patched marker
-    echo -e "\n\n${PATCHED_MARKER}" >> "${intelephense_js}"
+    echo -e "\n\n${PATCHED_MARKER}" >>"${intelephense_js}"
 }
 
 for INTELEPHENSE_JS in "${SERVER_BIN_LOCATIONS[@]}"; do

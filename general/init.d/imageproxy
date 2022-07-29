@@ -23,121 +23,121 @@ CACHE_DESTINATION="/tmp/imageproxy"
 ALLOWED_CONTENT_TYPES="image/*,image"
 USER_AGENT="Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.80 Safari/537.36"
 
-wait_for_pid () {
-    try=0
+wait_for_pid() {
+        try=0
 
-    while test "${try}" -lt 35 ; do
+        while test "${try}" -lt 35; do
 
-        case "$1" in
-            'created')
-            if [ -f "$2" ] ; then
-                try=''
-                break
-            fi
-            ;;
+                case "$1" in
+                'created')
+                        if [ -f "$2" ]; then
+                                try=''
+                                break
+                        fi
+                        ;;
 
-            'removed')
-            if [ ! -f "$2" ] ; then
-                try=''
-                break
-            fi
-            ;;
-        esac
+                'removed')
+                        if [ ! -f "$2" ]; then
+                                try=''
+                                break
+                        fi
+                        ;;
+                esac
 
-        echo -n .
-        try=`expr ${try} + 1`
-        sleep 1
+                echo -n .
+                try=$(expr ${try} + 1)
+                sleep 1
 
-    done
+        done
 }
 
 case "$1" in
-    start)
+start)
         echo -n "Starting imageproxy "
 
         "${IMAGEPROXY_BIN}" -scaleUp -addr "${APP_ADDR}" -cache "${CACHE_DESTINATION}" -contentTypes "${ALLOWED_CONTENT_TYPES}" -userAgent "${USER_AGENT}" &
 
-        PID=`echo $!`
+        PID=$(echo $!)
 
-        if [ "${PID}" = "" ] ; then
-            echo " failed"
-            exit 1
+        if [ "${PID}" = "" ]; then
+                echo " failed"
+                exit 1
         else
-            echo "${PID}" > "${PID_FILE}"
+                echo "${PID}" >"${PID_FILE}"
         fi
 
         wait_for_pid created "${PID_FILE}"
 
-        if [ -n "${try}" ] ; then
-            echo " failed"
-            exit 1
+        if [ -n "${try}" ]; then
+                echo " failed"
+                exit 1
         else
-            echo " done"
+                echo " done"
         fi
-    ;;
+        ;;
 
-    stop)
+stop)
         echo -n "Gracefully shutting down imageproxy "
 
-        if [ ! -r "${PID_FILE}" ] ; then
-            echo "warning, no pid file found - imageproxy is not running ?"
-            exit 1
+        if [ ! -r "${PID_FILE}" ]; then
+                echo "warning, no pid file found - imageproxy is not running ?"
+                exit 1
         fi
 
-        kill -QUIT `cat "${PID_FILE}"` && rm -f "${PID_FILE}"
+        kill -QUIT $(cat "${PID_FILE}") && rm -f "${PID_FILE}"
 
         wait_for_pid removed "${PID_FILE}"
 
-        if [ -n "${try}" ] ; then
-            echo " failed. Use force-quit"
-            exit 1
+        if [ -n "${try}" ]; then
+                echo " failed. Use force-quit"
+                exit 1
         else
-            echo " done"
+                echo " done"
         fi
-    ;;
+        ;;
 
-    status)
-        if [ ! -r ${PID_FILE} ] ; then
-            echo "imageproxy is stopped"
-            exit 0
+status)
+        if [ ! -r ${PID_FILE} ]; then
+                echo "imageproxy is stopped"
+                exit 0
         fi
 
-        PID=`cat "${PID_FILE}"`
+        PID=$(cat "${PID_FILE}")
         if ps -p "${PID}" | grep -q "${PID}"; then
-            echo "imageproxy (pid ${PID}) is running..."
+                echo "imageproxy (pid ${PID}) is running..."
         else
-            echo "imageproxy dead but pid file exists"
+                echo "imageproxy dead but pid file exists"
         fi
-    ;;
+        ;;
 
-    force-quit)
+force-quit)
         echo -n "Terminating imageproxy "
 
-        if [ ! -r "${PID_FILE}" ] ; then
-            echo "warning, no pid file found - imageproxy is not running ?"
-            exit 1
+        if [ ! -r "${PID_FILE}" ]; then
+                echo "warning, no pid file found - imageproxy is not running ?"
+                exit 1
         fi
 
-        kill -TERM `cat "${PID_FILE}"` && rm -f "${PID_FILE}"
+        kill -TERM $(cat "${PID_FILE}") && rm -f "${PID_FILE}"
 
         wait_for_pid removed "${PID_FILE}"
 
-        if [ -n "${try}" ] ; then
-            echo " failed"
-            exit 1
+        if [ -n "${try}" ]; then
+                echo " failed"
+                exit 1
         else
-            echo " done"
+                echo " done"
         fi
-    ;;
+        ;;
 
-    restart)
+restart)
         $0 stop
         $0 start
-    ;;
+        ;;
 
-    *)
+*)
         echo "Usage: $0 {start|stop|force-quit|restart|status}"
         exit 1
-    ;;
+        ;;
 
 esac

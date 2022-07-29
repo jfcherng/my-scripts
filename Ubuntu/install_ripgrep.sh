@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 pushd "${SCRIPT_DIR}" || exit
 
-[[ "${UID}" == "0" ]] || { echo "run as sudo to execute"; exit 1; }
+[[ ${UID} == "0" ]] || {
+    echo "run as sudo to execute"
+    exit 1
+}
 
 apt install -y curl jq
 

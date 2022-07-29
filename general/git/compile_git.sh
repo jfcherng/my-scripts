@@ -6,7 +6,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com> #
 #------------------------------------------#
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
 if [ "$(id -u)" != "0" ]; then
@@ -14,7 +14,6 @@ if [ "$(id -u)" != "0" ]; then
 else
     is_root=true
 fi
-
 
 #-------#
 # begin #
@@ -24,7 +23,6 @@ pushd "${SCRIPT_DIR}" || exit
 
 # prefer the latest user-installed libs if possible
 PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
-
 
 echo "========================================================================="
 if [ "${is_root}" = true ]; then
@@ -37,7 +35,6 @@ fi
 echo "This script will install git to '${git_install_prefix}'."
 echo "========================================================================="
 
-
 git_ver_old=$("${git_install_prefix}/bin/git" --version | cut -d ' ' -f 3)
 if [ "${git_ver_old}" = "" ]; then
     git_ver_old="None"
@@ -45,7 +42,6 @@ fi
 echo "Current git Version: ${git_ver_old}"
 echo "You can find version number from 'https://github.com/git/git/releases'"
 echo "Note: the latest build may not work properly!"
-
 
 #--------------------------#
 # read option: git_ver_new #
@@ -57,7 +53,6 @@ if [ "${git_ver_new}" = "" ]; then
     exit 1
 fi
 
-
 #---------------------------#
 # read option: thread_count #
 #---------------------------#
@@ -66,7 +61,6 @@ read -erp "Parallel compilation with thread counts (default = ${THREAD_CNT}): " 
 if [ "${thread_count}" = "" ]; then
     thread_count=${THREAD_CNT}
 fi
-
 
 #--------------#
 # confirmation #
@@ -82,7 +76,6 @@ echo "Is the above information correct?"
 echo "Press any key to start or Ctrl+C to cancel."
 read -rn 1 # wait for a key press
 echo
-
 
 #----------------------#
 # download source code #
@@ -110,30 +103,28 @@ fi
 
 echo "===================== Download Package: End ============================="
 
-
 #----------------------#
 # install dependencies #
 #----------------------#
 
 if [ "${is_root}" = true ]; then
-echo
-echo "You are a ROOT, let's install dependencies..."
-echo "=================== Install dependencies: Start ========================="
+    echo
+    echo "You are a ROOT, let's install dependencies..."
+    echo "=================== Install dependencies: Start ========================="
 
-# if there is `yum`, install dependencies
-if command -v yum >/dev/null 2>&1; then
-    yum install -y autoconf curl curl-devel zlib-devel openssl-devel perl perl-devel cpio expat-devel gettext-devel unzip gcc autoconf
-# if there is `apt`, install dependencies
-elif command -v apt >/dev/null 2>&1; then
-    apt update
-    apt install -y autoconf build-essential gettext libcurl4-gnutls-dev libexpat1-dev libnl-dev libnl1 libreadline6-dev libssl-dev libssl-dev zlib1g-dev
-else
-    echo "Did not find 'yum' or 'apt'..."
+    # if there is `yum`, install dependencies
+    if command -v yum >/dev/null 2>&1; then
+        yum install -y autoconf curl curl-devel zlib-devel openssl-devel perl perl-devel cpio expat-devel gettext-devel unzip gcc autoconf
+    # if there is `apt`, install dependencies
+    elif command -v apt >/dev/null 2>&1; then
+        apt update
+        apt install -y autoconf build-essential gettext libcurl4-gnutls-dev libexpat1-dev libnl-dev libnl1 libreadline6-dev libssl-dev libssl-dev zlib1g-dev
+    else
+        echo "Did not find 'yum' or 'apt'..."
+    fi
+
+    echo "=================== Install dependencies: End ==========================="
 fi
-
-echo "=================== Install dependencies: End ==========================="
-fi
-
 
 #-------------#
 # compile git #
@@ -162,7 +153,7 @@ if command -v autoconf >/dev/null 2>&1; then
     autoconf || exit 1
     ./configure --prefix="${git_install_prefix}"
 fi
-make -j "${thread_count}" all #CFLAGS="-liconv"
+make -j "${thread_count}" all     #CFLAGS="-liconv"
 make -j "${thread_count}" install #CFLAGS="-liconv"
 
 # error during compilation?
@@ -171,9 +162,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # compile modules
-git_modules=( 'subtree' )
-for git_module in "${git_modules[@]}"
-do
+git_modules=('subtree')
+for git_module in "${git_modules[@]}"; do
     pushd "contrib/${git_module}" || exit
 
     make -j "${thread_count}"
@@ -186,12 +176,10 @@ popd || exit
 
 echo "===================== Compile git: End ============================="
 
-
 git_ver_new=$("${git_install_prefix}/bin/git" --version | cut -d ' ' -f 3)
 if [ "${git_ver_new}" = "" ]; then
     git_ver_new="None"
 fi
-
 
 echo
 echo "========================================================================="
@@ -200,14 +188,12 @@ echo "You may have to add '${git_install_prefix}/bin' to your PATH"
 echo "========================================================================="
 echo
 
-
 #----------------#
 # remove sources #
 #----------------#
 
 rm -f "${git_archive}"*
 rm -rf "${git_source_dir_name}"
-
 
 #-----#
 # end #

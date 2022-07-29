@@ -6,7 +6,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com>          #
 #---------------------------------------------------#
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
 NOW="$(date +%Y%m%d%H%M%S)"
@@ -22,82 +22,77 @@ function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4
 
 {
 
-#-------------------#
-# check gcc version #
-#-------------------#
+    #-------------------#
+    # check gcc version #
+    #-------------------#
 
-GCC_MIN_VERSION=4.9.0
-if [ "$(version "$(gcc -dumpversion)")" -lt "$(version "${GCC_MIN_VERSION}")" ]; then
-    echo "[*] GCC must be newer than ${GCC_MIN_VERSION}"
-    exit 1
-fi
+    GCC_MIN_VERSION=4.9.0
+    if [ "$(version "$(gcc -dumpversion)")" -lt "$(version "${GCC_MIN_VERSION}")" ]; then
+        echo "[*] GCC must be newer than ${GCC_MIN_VERSION}"
+        exit 1
+    fi
 
+    #--------------#
+    # install deps #
+    #--------------#
 
-#--------------#
-# install deps #
-#--------------#
+    yum install -y \
+        scons socat openssl check cmake3 bison \
+        boost-devel asio-devel libaio-devel ncurses-devel \
+        readline-devel pam-devel libcurl-devel
 
-yum install -y \
-    scons socat openssl check cmake3 bison \
-    boost-devel asio-devel libaio-devel ncurses-devel \
-    readline-devel pam-devel libcurl-devel
+    #-------#
+    # begin #
+    #-------#
 
+    pushd "${SCRIPT_DIR}" || exit
 
-#-------#
-# begin #
-#-------#
+    # prefer the latest user-installed libs if possible
+    PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
 
-pushd "${SCRIPT_DIR}" || exit
+    #---------------------#
+    # download the source #
+    #---------------------#
 
-# prefer the latest user-installed libs if possible
-PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+    wget "https://www.percona.com/downloads/Percona-Server-LATEST/${APP_NAME}/source/tarball/${TAR_FILE_NAME}" -O "${TAR_FILE_NAME}"
+    tar xf "${TAR_FILE_NAME}"
 
+    #-----------------#
+    # compile Percona #
+    #-----------------#
 
-#---------------------#
-# download the source #
-#---------------------#
+    pushd "${TAR_FILE_BASENAME}" || exit
 
-wget "https://www.percona.com/downloads/Percona-Server-LATEST/${APP_NAME}/source/tarball/${TAR_FILE_NAME}" -O "${TAR_FILE_NAME}"
-tar xf "${TAR_FILE_NAME}"
+    rm -rf my_build && mkdir -p my_build
+    pushd my_build || exit
 
+    cmake .. \
+        -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_DIR}" \
+        -DDOWNLOAD_BOOST=1 -DWITH_BOOST="$(pwd)/boost" \
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+        -DBUILD_CONFIG=mysql_release \
+        -DFEATURE_SET=community
 
-#-----------------#
-# compile Percona #
-#-----------------#
+    # it's quite possible that we run out of memory, so -j2
+    make -j2 || exit
+    make install || exit
 
-pushd "${TAR_FILE_BASENAME}" || exit
+    popd || exit
 
-rm -rf my_build && mkdir -p my_build
-pushd my_build  || exit
+    popd || exit
 
-cmake .. \
-    -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_DIR}" \
-    -DDOWNLOAD_BOOST=1 -DWITH_BOOST="$(pwd)/boost" \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DBUILD_CONFIG=mysql_release \
-    -DFEATURE_SET=community
+    #-----#
+    # end #
+    #-----#
 
-# it's quite possible that we run out of memory, so -j2
-make -j2 || exit
-make install || exit
+    "${INSTALL_DIR}/bin/mysql" -V || exit
 
-popd || exit
+    groupadd mysql
+    useradd -g mysql -s /sbin/nologin -M mysql
 
-popd || exit
+    mkdir -p /data/mysql
+    chown mysql.mysql -R /data/mysql
 
-
-#-----#
-# end #
-#-----#
-
-"${INSTALL_DIR}/bin/mysql" -V || exit
-
-groupadd mysql
-useradd -g mysql -s /sbin/nologin -M mysql
-
-mkdir -p /data/mysql
-chown mysql.mysql -R /data/mysql
-
-popd || exit
+    popd || exit
 
 } | tee "${LOG_FILE}"

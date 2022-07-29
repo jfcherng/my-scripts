@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-[[ "${UID}" == "0" ]] && { echo "do not directly run this script as root"; exit 1; }
+[[ ${UID} == "0" ]] && {
+    echo "do not directly run this script as root"
+    exit 1
+}
 
 [ ! -f /usr/lib/beyondcompare/BCompare ] && echo 'Cannot find the "BCompare" executable...'
 
@@ -15,7 +18,7 @@ rm -rf ~/.config/bcompare
 mkdir -p ~/.config/bcompare
 
 # add license key for the current user
-cat << 'EOF' > ~/.config/bcompare/BC4Key.txt
+cat <<'EOF' >~/.config/bcompare/BC4Key.txt
 Beyond Compare 4
 Licensed to:    pwelyn
 Quantity:       9999 users

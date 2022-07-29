@@ -6,7 +6,7 @@
 # Author: Jack Cherng <jfcherng@gmail.com>         #
 #--------------------------------------------------#
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 THREAD_CNT=$(getconf _NPROCESSORS_ONLN)
 
 NOW="$(date +%Y%m%d%H%M%S)"
@@ -75,138 +75,134 @@ function git_repo_clean {
 
 {
 
-#-------#
-# begin #
-#-------#
+    #-------#
+    # begin #
+    #-------#
 
-pushd "${SCRIPT_DIR}" || exit
+    pushd "${SCRIPT_DIR}" || exit
 
-# prefer the latest user-installed libs if possible
-PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
+    # prefer the latest user-installed libs if possible
+    PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig:${PKG_CONFIG_PATH}"
 
+    #-----------------------------------------#
+    # filter out useless PHP base directories #
+    #-----------------------------------------#
 
-#-----------------------------------------#
-# filter out useless PHP base directories #
-#-----------------------------------------#
+    for IDX in "${!PHP_BASE_DIRS[@]}"; do
+        PHP_BASE_DIR=${PHP_BASE_DIRS[${IDX}]}
 
-for IDX in "${!PHP_BASE_DIRS[@]}"; do
-    PHP_BASE_DIR=${PHP_BASE_DIRS[${IDX}]}
+        # required files
+        declare -A files=(
+            ["phpize"]="${PHP_BASE_DIR}/bin/phpize"
+            ["php_config"]="${PHP_BASE_DIR}/bin/php-config"
+        )
 
-    # required files
-    declare -A files=(
-        ["phpize"]="${PHP_BASE_DIR}/bin/phpize"
-        ["php_config"]="${PHP_BASE_DIR}/bin/php-config"
-    )
-
-    # eleminate PHP base directory if required files not found
-    for file in "${files[@]}"; do
-        if [ ! -f "${file}" ]; then
-            echo "[*] Skip '${PHP_BASE_DIR}' because '${file}' is not a file..."
-            unset PHP_BASE_DIRS["${IDX}"]
-            continue 2
-        fi
+        # eleminate PHP base directory if required files not found
+        for file in "${files[@]}"; do
+            if [ ! -f "${file}" ]; then
+                echo "[*] Skip '${PHP_BASE_DIR}' because '${file}' is not a file..."
+                unset PHP_BASE_DIRS["${IDX}"]
+                continue 2
+            fi
+        done
     done
-done
 
+    #----------------------#
+    # install dependencies #
+    #----------------------#
 
-#----------------------#
-# install dependencies #
-#----------------------#
-
-echo "==================================="
-echo "Begin install 'PHP' dependencies..."
-echo "==================================="
-
-# yum
-if command -v yum >/dev/null 2>&1; then
-    yum install -y --skip-broken \
-        mpdecimal mpdecimal-devel \
-        libsodium libsodium-devel \
-        liblzf liblzf-devel \
-        ImageMagick ImageMagick-devel ImageMagick-perl
-# apt
-elif command -v apt >/dev/null 2>&1; then
-    apt update
-    apt install -y \
-        libmpdec libmpdec-dev \
-        libsodium23 libsodium-dev
-else
-    echo "Could not find 'yum' or 'apt'..."
-fi
-
-
-#------------------------#
-# compile PHP extensions #
-#------------------------#
-
-BUILD_DIR="${SCRIPT_DIR}/php_exts_clone"
-
-mkdir -p "${BUILD_DIR}"
-
-pushd "${BUILD_DIR}" || exit
-
-for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
     echo "==================================="
-    echo "Begin compile '${PHP_EXT_NAME}'..."
+    echo "Begin install 'PHP' dependencies..."
     echo "==================================="
 
-    # clone new repos
-    if [ ! -d "${PHP_EXT_NAME}/.git" ]; then
-        rm -rf "${PHP_EXT_NAME}"
-        eval "${PHP_EXTS_CMD[${PHP_EXT_NAME}]}" || exit
+    # yum
+    if command -v yum >/dev/null 2>&1; then
+        yum install -y --skip-broken \
+            mpdecimal mpdecimal-devel \
+            libsodium libsodium-devel \
+            liblzf liblzf-devel \
+            ImageMagick ImageMagick-devel ImageMagick-perl
+    # apt
+    elif command -v apt >/dev/null 2>&1; then
+        apt update
+        apt install -y \
+            libmpdec libmpdec-dev \
+            libsodium23 libsodium-dev
+    else
+        echo "Could not find 'yum' or 'apt'..."
     fi
 
-    pushd "${PHP_EXT_NAME}/" || exit
+    #------------------------#
+    # compile PHP extensions #
+    #------------------------#
 
-    git_repo_clean
+    BUILD_DIR="${SCRIPT_DIR}/php_exts_clone"
 
-    # fetch the latest source
-    git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
-    git submodule update --init
-    git submodule foreach --recursive git pull
+    mkdir -p "${BUILD_DIR}"
 
-    # checkout a specific commit
-    commit=${PHP_EXTS_CHECKOUT[${PHP_EXT_NAME}]}
-    if [ "${commit}" != "" ]; then
-        git checkout -f "${commit}"
-    fi
+    pushd "${BUILD_DIR}" || exit
 
-    for PHP_BASE_DIR in "${PHP_BASE_DIRS[@]}"; do
-        # paths
-        phpize="${PHP_BASE_DIR}/bin/phpize"
-        php_config="${PHP_BASE_DIR}/bin/php-config"
-        config_options=${PHP_EXTS_CONFIG[${PHP_EXT_NAME}]}
+    for PHP_EXT_NAME in "${!PHP_EXTS_CMD[@]}"; do
+        echo "==================================="
+        echo "Begin compile '${PHP_EXT_NAME}'..."
+        echo "==================================="
 
-        # set tab title (for tmux)
-        tab_title "${PHP_BASE_DIR}: ${PHP_EXT_NAME}"
+        # clone new repos
+        if [ ! -d "${PHP_EXT_NAME}/.git" ]; then
+            rm -rf "${PHP_EXT_NAME}"
+            eval "${PHP_EXTS_CMD[${PHP_EXT_NAME}]}" || exit
+        fi
 
-        # compile
-        "${phpize}"
-        ./configure --with-php-config="${php_config}" ${config_options}
-        make -j"${THREAD_CNT}" install
+        pushd "${PHP_EXT_NAME}/" || exit
+
         git_repo_clean
+
+        # fetch the latest source
+        git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
+        git submodule update --init
+        git submodule foreach --recursive git pull
+
+        # checkout a specific commit
+        commit=${PHP_EXTS_CHECKOUT[${PHP_EXT_NAME}]}
+        if [ "${commit}" != "" ]; then
+            git checkout -f "${commit}"
+        fi
+
+        for PHP_BASE_DIR in "${PHP_BASE_DIRS[@]}"; do
+            # paths
+            phpize="${PHP_BASE_DIR}/bin/phpize"
+            php_config="${PHP_BASE_DIR}/bin/php-config"
+            config_options=${PHP_EXTS_CONFIG[${PHP_EXT_NAME}]}
+
+            # set tab title (for tmux)
+            tab_title "${PHP_BASE_DIR}: ${PHP_EXT_NAME}"
+
+            # compile
+            "${phpize}"
+            ./configure --with-php-config="${php_config}" ${config_options}
+            make -j"${THREAD_CNT}" install
+            git_repo_clean
+        done
+
+        popd || exit
+
+        # restore tab title
+        tab_title
+
+        echo "==================================="
+        echo "End compile '${PHP_EXT_NAME}'..."
+        echo "==================================="
     done
 
     popd || exit
 
+    #-----#
+    # end #
+    #-----#
+
     # restore tab title
     tab_title
 
-    echo "==================================="
-    echo "End compile '${PHP_EXT_NAME}'..."
-    echo "==================================="
-done
-
-popd || exit
-
-
-#-----#
-# end #
-#-----#
-
-# restore tab title
-tab_title
-
-popd || exit
+    popd || exit
 
 } | tee "${LOG_FILE}"
