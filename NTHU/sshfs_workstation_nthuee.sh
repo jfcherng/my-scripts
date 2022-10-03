@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Install sshfs
 #     $ sudo apt-get install -y sshfs

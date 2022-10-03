@@ -2,7 +2,7 @@
 
 export FORCE_COLOR=0
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 NOW="$(date +%Y%m%d-%H%M%S)"
 
 SUB_PATH="intelephense/lib/intelephense.js"
