@@ -24,7 +24,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="3.0.5"
+OPENSSL_VERSION="3.0.7"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -40,7 +40,7 @@ declare -A NGINX_CMD=(
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
-    ["ngx_njs"]="tags/0.7.6"
+    ["ngx_njs"]="tags/0.7.9"
 )
 
 {
@@ -99,7 +99,7 @@ declare -A NGINX_MODULES_CHECKOUT=(
     if [ ! -d "${openssl_src_dir}" ]; then
         rm -rf -- openssl-* # remove downloaded old libs
 
-        curl -O -L "https://github.com/openssl/openssl/archive/${openssl_tarball}"
+        curl -O -L "https://ftp.openssl.org/source/${openssl_tarball}"
 
         if [ ! -s "${openssl_tarball}" ]; then
             echo "Failed to download OpenSSL tarball..."
