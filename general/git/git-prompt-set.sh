@@ -93,34 +93,64 @@ Dollar='$'
 
 # This PS1 snippet was adopted from code for MAC/BSD I saw from:
 # http://allancraig.net/index.php?option=com_content&view=article&id=108:ps1-export-command-for-git&catid=45:general&Itemid=96
+# Re-written by Jack Cherng <jfcherng@gmail.com> for performance under Windows
 
 export PS1="[${Username}@${HostnameShort} ${IYellow}${PathShort}${Color_Off}]"'\
 $( \
-    # early stop if not in git-managed directory
-    git rev-parse --is-inside-work-tree &>/dev/null || exit 1; \
+    { \
+        # from git rev-parse
+        read _is_bare; \
+        read _is_shallow; \
+        read _is_in_git_dir; \
+        read _is_in_work_tree; \
+        # from git status
+        read _st_oid; \
+        read _st_head; \
+        read -d "" _st; \
+    } <<< "$( \
+        git rev-parse \
+            --is-bare-repository \
+            --is-shallow-repository \
+            --is-inside-git-dir \
+            --is-inside-work-tree \
+            2>/dev/null \
+        && git status --porcelain=2 --branch 2>/dev/null \
+    )"; \
 \
-    git_status=$(git status --porcelain=2 --branch); \
-    branch_oid=$(sed -nE -e "s/^# branch\.oid (.*)$/\1/p" <<< "${git_status}"); \
-    branch_name=$(sed -nE -e "s/^# branch\.head (.*)$/\1/p" <<< "${git_status}"); \
-    branch_ab=$(sed -nE -e "s/^# branch\.ab (.*)$/\1/p" <<< "${git_status}"); \
-    branch=$(
-        grep -q "^[^#]" <<< "${git_status}" \
-            && echo "'${BIRed}'${branch_name}'${Color_Off}'" \
-            || echo "'${BIGreen}'${branch_name}'${Color_Off}'" \
-    ); \
+    # not git-managed
+    [[ -z $_is_bare ]] && exit; \
+    # early stop if bare repository
+    [[ $_is_bare == "true" ]] && echo -n "('${BICyan}'bare'${Color_Off}')" && exit; \
+    # early stop if in .git repository
+    [[ $_is_in_git_dir == "true" ]] && echo -n "('${BICyan}'git-dir'${Color_Off}')" && exit; \
+    # early stop if not in work tree directory
+    [[ $_is_in_work_tree == "false" ]] && exit; \
 \
-    if [[ "${branch_oid}" = "(initial)" ]]; then \
+    # "upstream" and "ab" are not present if non-detached HEAD
+    [[ ${_st} =~ ^\\# ]] && { read _st_upstream; read -d "" _st; } <<< "${_st}"; \
+    [[ ${_st} =~ ^\\# ]] && { read _st_ab; read -d "" _st; } <<< "${_st}"; \
+\
+    [[ ${_st_oid} =~ \.oid\ ([^\r\n]*) ]] && _branch_oid="${BASH_REMATCH[1]}"; \
+    [[ ${_st_head} =~ \.head\ ([^\r\n]*) ]] && _branch_name="${BASH_REMATCH[1]}"; \
+    [[ ${_st_upstream} =~ \.upstream\ ([^\r\n]*) ]] && _branch_upstream="${BASH_REMATCH[1]}"; \
+    [[ ${_st_ab} =~ \.ab\ ([^\r\n]*) ]] && _branch_ab="${BASH_REMATCH[1]}"; \
+\
+    [[ ${_is_shallow} == "true" ]] \
+        && shallow_sign="'${BICyan}'!'${Color_Off}'" \
+        || shallow_sign=; \
+\
+    [[ ${_st} =~ ^[^#] ]] \
+        && branch_name="'${BIRed}'${_branch_name}'${Color_Off}'" \
+        || branch_name="'${BIGreen}'${_branch_name}'${Color_Off}'"; \
+\
+    if [[ ${_branch_oid} == "(initial)" ]]; then \
         # there is no commit yet
-        branch_status="('${BIRed}'initial'${Color_Off}')"; \
+        branch_status="('${BICyan}'initial'${Color_Off}')"; \
     else \
-        branch_status=$( \
-            sed -r \
-                -e "s/ +|[+-]0//g" \
-                -e "s/\+([0-9]+)/'${BIGreen}'>\1'${Color_Off}'/g" \
-                -e "s/\-([0-9]+)/'${BIRed}'<\1'${Color_Off}'/g" \
-                <<< "${branch_ab}" \
-        ); \
+        [[ ${_branch_ab} =~ \\+([0-9]+)\ -([0-9]+) ]] && branch_status="'${BIGreen}'>${BASH_REMATCH[1]}'${Color_Off}${BIRed}'<${BASH_REMATCH[2]}'${Color_Off}'"; \
+        branch_status="${branch_status/'${BIGreen}'>0'${Color_Off}'/}"; \
+        branch_status="${branch_status/'${BIRed}'<0'${Color_Off}'/}"; \
     fi; \
 \
-    echo -n "(${branch})${branch_status}"; \
+    echo -n "(${branch_name})${shallow_sign}${branch_status}"; \
 )'"${Dollar} "
