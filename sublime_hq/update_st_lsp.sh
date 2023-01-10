@@ -3,7 +3,7 @@
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 ST_LSP_PACKAGE_PATH="${APPDATA}\Sublime Text\Installed Packages\LSP.sublime-package"
-INTERESTED_BRANCH="main"
+INTERESTED_REF="main"
 
 pushd "${SCRIPT_DIR}" || exit
 
@@ -14,11 +14,12 @@ fi
 
 pushd "${SCRIPT_DIR}/LSP" || exit
 
+git checkout -f "${INTERESTED_REF}" || exit 1
+git clean -dfx
+
 # fetch latest source
 git fetch --tags --force --prune --all || exit 1
 git reset --hard "@{upstream}" || exit 1
-git checkout -f "${INTERESTED_BRANCH}" || exit 1
-git pull --autostash --rebase || exit 1
 
 # create package
 git archive HEAD -o out.zip
@@ -28,6 +29,7 @@ git archive HEAD -o out.zip
 # replace ST's package
 mv -f out.zip "${ST_LSP_PACKAGE_PATH}"
 
+git checkout -f - || exit 1
 git clean -dfx
 
 popd || exit
