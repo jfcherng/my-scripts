@@ -159,7 +159,7 @@ function git_repo_clean {
 
         # fetch the latest source
         git fetch --tags --force --prune --all && git reset --hard "@{upstream}"
-        git submodule update --init
+        git submodule update --init --force
         git submodule foreach --recursive git pull
 
         # checkout a specific commit
