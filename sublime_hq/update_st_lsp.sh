@@ -2,24 +2,34 @@
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-ST_LSP_PACKAGE_PATH="${APPDATA}\Sublime Text\Installed Packages\LSP.sublime-package"
-INTERESTED_REF="main"
+ST_LSP_PACKAGE_PATH="${SCRIPT_DIR}/../Installed Packages/LSP.sublime-package"
+INTERESTED_REF=${1:-main}
+TMP_DIR="${SCRIPT_DIR}/tmp"
 
-pushd "${SCRIPT_DIR}" || exit
+cleanup() {
+    rm -rf "${TMP_DIR}"
+}
 
-if [[ ! -d "LSP/.git" ]]; then
-    rm -rf "LSP/"
-    git clone "https://github.com/sublimelsp/LSP.git"
+if [ ! -f "${ST_LSP_PACKAGE_PATH}" ]; then
+    echo "LSP package not found..."
+    exit 1
 fi
 
-pushd "${SCRIPT_DIR}/LSP" || exit
+cleanup
+mkdir -p "${TMP_DIR}"
 
-git checkout -f "${INTERESTED_REF}" || exit 1
-git clean -dfx
+git clone "https://github.com/sublimelsp/LSP.git" \
+    --single-branch \
+    --branch="${INTERESTED_REF}" \
+    --depth=1 \
+    "${TMP_DIR}/LSP"
 
-# fetch latest source
-git fetch --tags --force --prune --all || exit 1
-git reset --hard "@{upstream}" || exit 1
+if [[ $? != "0" ]]; then
+    echo "Failed to clone LSP with ref: ${INTERESTED_REF}"
+    exit 1
+fi
+
+pushd "${TMP_DIR}/LSP" || exit
 
 # create package
 git archive HEAD -o out.zip
@@ -29,9 +39,6 @@ git archive HEAD -o out.zip
 # replace ST's package
 mv -f out.zip "${ST_LSP_PACKAGE_PATH}"
 
-git checkout -f - || exit 1
-git clean -dfx
-
 popd || exit
 
-popd || exit
+cleanup

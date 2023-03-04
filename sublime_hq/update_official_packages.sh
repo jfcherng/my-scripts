@@ -29,9 +29,10 @@ PKG_GITHUB_URL="https://github.com/sublimehq/Packages"
 PKG_REMOTE_REPO="${PKG_GITHUB_URL}.git"
 
 ST_INSTALL_DIRS=(
-    # this script's dir and its parent (if you put this script in Data/)
+    # this script's dir and its parents (in case you put this script in "Data/" or deeper)
     "${SCRIPT_DIR}"
     "${SCRIPT_DIR}/.."
+    "${SCRIPT_DIR}/../.."
     # Windows
     "C:/Program Files/Sublime Text"
     "C:/Program Files/Sublime Text 3"
