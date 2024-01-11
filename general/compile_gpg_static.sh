@@ -17,16 +17,16 @@ set   -o nounset
 SKIP_DOWNLOAD_VERIFY=${SKIP_DOWNLOAD_VERIFY:-true}
 
 v_musl_libc=1.2.3          # https://musl.libc.org/
-v_libsqlite=3400000        # https://www.sqlite.org/download.html
-v_zlib_zlib=1.2.13         # https://zlib.net/
+v_libsqlite=3440200        # https://www.sqlite.org/download.html
+v_zlib_zlib=1.3         # https://zlib.net/
 
 v_gpg_lnpth=1.6            # https://gnupg.org/download/index.html
-v_gpg_error=1.46
-v_gpg_lassn=2.5.5
-v_gpg_gcrpt=1.10.1
-v_gpg_lksba=1.6.2
+v_gpg_error=1.47
+v_gpg_lassn=2.5.6
+v_gpg_gcrpt=1.10.3
+v_gpg_lksba=1.6.5
 v_gpg_n_tls=0.3.1
-v_gpg_gnupg=2.3.8
+v_gpg_gnupg=2.4.3
 v_gpg_pntry=1.2.1
 
 n_processes=$(getconf _NPROCESSORS_ONLN)
@@ -35,7 +35,7 @@ gpg_baseurl='https://gnupg.org/ftp/gcrypt'
 
 all_dl_urls=(
    "https://musl.libc.org/releases/musl-${v_musl_libc}.tar.gz"{,.asc}
-   "https://www.sqlite.org/2022/sqlite-autoconf-${v_libsqlite}.tar.gz"
+   "https://www.sqlite.org/2023/sqlite-autoconf-${v_libsqlite}.tar.gz"
    "https://zlib.net/zlib-${v_zlib_zlib}.tar.gz"{,.asc}
    "${gpg_baseurl}/npth/npth-${v_gpg_lnpth}.tar.bz2"{,.sig}
    "${gpg_baseurl}/libgpg-error/libgpg-error-${v_gpg_error}.tar.bz2"{,.sig}
@@ -288,9 +288,12 @@ export CC="${pfx}/bin/musl-gcc"
    # Fix build failure ("undefined reference to `ks_ldap_free_state'" in
    # dirmngr/server.c). The source of this patch is the LFS project page at
    # <https://www.linuxfromscratch.org/blfs/view/svn/postlfs/gnupg.html>:
+   # https://lore.kernel.org/buildroot/20230822200736.30cc8fc8@windsurf/T/
    sed                                             \
       -e '/ks_ldap_free_state/i #if USE_LDAP'      \
       -e '/ks_get_state =/a #endif'                \
+      -e '/ks_ldap_help_variables/i #if USE_LDAP'      \
+      -e '/ks_ldap_help_variables/a #endif'                \
       -i "gnupg-${v_gpg_gnupg}/dirmngr/server.c"
    mkdir -p gnupg/ && cd gnupg/
    "../gnupg-${v_gpg_gnupg}/configure" CC="${GCC}" LDFLAGS='-static -s' \
