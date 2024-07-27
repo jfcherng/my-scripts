@@ -24,7 +24,7 @@ function git_repo_clean {
 #--------#
 
 NGINX_INSTALL_DIR="/usr/local/nginx"
-OPENSSL_VERSION="3.1.4"
+OPENSSL_VERSION="3.5.4"
 
 # the command used to clone a repo
 declare -A NGINX_CMD=(
@@ -40,7 +40,7 @@ declare -A NGINX_CMD=(
 # checkout repo to a specific commit before compilation
 declare -A NGINX_MODULES_CHECKOUT=(
     # modules
-    ["ngx_njs"]="tags/0.8.1"
+    ["ngx_njs"]="tags/0.9.4"
 )
 
 {
@@ -99,7 +99,7 @@ declare -A NGINX_MODULES_CHECKOUT=(
     if [ ! -d "${openssl_src_dir}" ]; then
         rm -rf -- openssl-* # remove downloaded old libs
 
-        curl -O -L "https://ftp.openssl.org/source/${openssl_tarball}"
+        curl -O -L "https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/${openssl_tarball}"
 
         if [ ! -s "${openssl_tarball}" ]; then
             echo "Failed to download OpenSSL tarball..."
@@ -170,13 +170,11 @@ declare -A NGINX_MODULES_CHECKOUT=(
     # end #
     #-----#
 
-    "${NGINX_INSTALL_DIR}/sbin/nginx" -V
-
     # try to restart the daemon if NGINX works normally
-    if [ $? -eq 0 ]; then
+    if "${NGINX_INSTALL_DIR}/sbin/nginx" -V; then
         daemon="/etc/init.d/nginx"
 
-        [ -x "${daemon}" ] && "${daemon}" restart
+        [[ -x ${daemon} ]] && "${daemon}" restart
     fi
 
     popd || exit
