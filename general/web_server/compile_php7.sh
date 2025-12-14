@@ -343,6 +343,7 @@ EOT
         --with-mhash \
         --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --enable-mysqlnd \
         --with-openssl \
+        --with-openssl-dir="/usr/local/bin" \
         --with-pspell \
         --with-readline \
         --with-xmlrpc \
